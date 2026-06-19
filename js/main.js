@@ -110,3 +110,33 @@ const revealObserver = new IntersectionObserver((entries) => {
 revealElements.forEach(element => {
   revealObserver.observe(element);
 });
+
+const shareBtn = document.getElementById("shareBtn");
+
+if (shareBtn) {
+  shareBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const shareData = {
+      title: "Catacaos, Color y Tradición",
+      text: "Conoce la web oficial de Catacaos, Color y Tradición.",
+      url: "https://pedroyov.github.io/catacaos-color-tradicion/"
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        alert("Enlace copiado al portapapeles");
+      }
+    } catch (error) {
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        alert("Enlace copiado al portapapeles");
+      } catch (copyError) {
+        alert("No se pudo compartir. Copia este enlace: " + shareData.url);
+      }
+    }
+  });
+}
