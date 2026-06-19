@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catacaos, Color y Tradición</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="img/logo1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="header transparent" id="header">
+    <nav class="navbar">
+      <a href="index.html" class="logo">
+        <img src="img/logo.png" alt="Catacaos Color y Tradición">
+        <span>Catacaos, Color y Tradición</span>
+      </a>
+
+      <button class="menu-btn" id="menuBtn">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="historia.html">Historia</a></li>
+        <li class="dropdown">
+            <a href="ediciones.html">Ediciones ▾</a>
+            <ul class="dropdown-menu">
+                <li><a href="ediciones/2017.html">2017</a></li>
+                <li><a href="ediciones/2018.html">2018</a></li>
+                <li><a href="ediciones/2019.html">2019</a></li>
+                <li><a href="ediciones/2020.html">2020</a></li>
+                <li><a href="ediciones/2023.html">2023</a></li>
+                <li><a href="ediciones/2024.html">2024</a></li>
+            </ul>
+        </li>
+        <li><a href="ganadores.html">Ganadores</a></li>
+        <li><a href="galeria.html">Galería</a></li>
+        <li><a href="organizacion.html">Organización</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="hero video-hero">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="videos/hero.mp4" type="video/mp4">
+        </video>
+
+        <div class="hero-dark"></div>
+
+        <div class="hero-content">
+            <p class="hero-subtitle">Concurso de Danzas y Estampas Folklóricas</p>
+            <h1>Catacaos, Color y Tradición</h1>
+            <p class="hero-text">
+            Celebrando la identidad, el arte y la riqueza cultural del Perú.
+            </p>
+            <div class="hero-buttons">
+            <a href="historia.html" class="btn primary">Conoce la historia</a>
+            <a href="ediciones.html" class="btn secondary">Ver ediciones</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="countdown-section reveal">
+      <h2>Próxima edición</h2>
+      <p>Muy pronto anunciaremos novedades del concurso.</p>
+
+      <div class="countdown" id="countdown">
+        <div><span id="days">00</span><small>Días</small></div>
+        <div><span id="hours">00</span><small>Horas</small></div>
+        <div><span id="minutes">00</span><small>Minutos</small></div>
+        <div><span id="seconds">00</span><small>Segundos</small></div>
+      </div>
+    </section>
+
+    <section class="section about reveal">
+      <div class="section-text">
+        <span class="tag">Sobre el concurso</span>
+        <h2>Una fiesta de cultura, tradición y danza</h2>
+        <p>
+          Catacaos, Color y Tradición es un espacio cultural dedicado a promover
+          las danzas folklóricas, la identidad regional y el talento artístico
+          de agrupaciones provenientes de distintas partes del país.
+        </p>
+        <a href="historia.html" class="link-more">Leer más →</a>
+      </div>
+
+      <div class="section-image">
+        <img src="img/home/sobre-concurso.jpg" alt="Danza folklórica en Catacaos">
+      </div>
+    </section>
+
+    <section class="impact-section">
+        <span class="tag center">Impacto cultural</span>
+        <h2 class="section-title">Un concurso que sigue creciendo</h2>
+
+        <div class="impact-grid">
+            <div class="impact-card">
+            <h3>8+</h3>
+            <p>Ediciones realizadas</p>
+            </div>
+
+            <div class="impact-card">
+            <h3>100+</h3>
+            <p>Agrupaciones participantes</p>
+            </div>
+
+            <div class="impact-card">
+            <h3>1000+</h3>
+            <p>Danzantes en escena</p>
+            </div>
+
+            <div class="impact-card">
+            <h3>5000+</h3>
+            <p>Espectadores y visitantes</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="timeline-home">
+        <span class="tag center">Historia viva</span>
+        <h2 class="section-title">Momentos importantes</h2>
+
+        <div class="timeline-grid">
+            <div class="timeline-item">
+            <span>2017</span>
+            <h3>Nace el concurso</h3>
+            <p>Primera edición de Catacaos, Color y Tradición.</p>
+            </div>
+
+            <div class="timeline-item">
+            <span>2020</span>
+            <h3>Edición especial</h3>
+            <p>El concurso se adapta a nuevos formatos y mantiene viva la tradición.</p>
+            </div>
+
+            <div class="timeline-item">
+            <span>2023</span>
+            <h3>Retorno presencial</h3>
+            <p>La danza vuelve a reunir a agrupaciones y público en Catacaos.</p>
+            </div>
+
+            <div class="timeline-item">
+            <span>2024</span>
+            <h3>Consolidación</h3>
+            <p>Una edición que reafirma el crecimiento cultural del concurso.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="honors-section">
+      <div class="section-heading">
+        <span class="section-kicker">Palmarés histórico</span>
+        <h2>Agrupaciones más destacadas</h2>
+        <p>Grupos que han logrado más primeros, segundos y terceros lugares en la historia del concurso.</p>
+      </div>
+
+      <div class="honors-category">
+        <h3>Categoría General</h3>
+
+        <div class="honors-grid">
+          <div class="honor-column">
+            <h4>🥇 Más campeonatos</h4>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/tierra-de-sol.png" alt="Tierra de Sol">
+              <div>
+                <strong>Tierra de Sol</strong>
+                <span>3 títulos</span>
+              </div>
+            </div>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/grupo-2.png" alt="Grupo">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>2 títulos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="honor-column">
+            <h4>🥈 Más subcampeonatos</h4>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/grupo-3.png" alt="Grupo">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>3 veces</span>
+              </div>
+            </div>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/grupo-4.png" alt="Grupo">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>2 veces</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="honor-column">
+            <h4>🥉 Más terceros lugares</h4>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/grupo-5.png" alt="Grupo">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>3 veces</span>
+              </div>
+            </div>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/grupo-6.png" alt="Grupo">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>2 veces</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="honors-category infant">
+        <h3>Categoría Infantil</h3>
+
+        <div class="honors-grid">
+          <div class="honor-column">
+            <h4>🥇 Más campeonatos</h4>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/infantil-1.png" alt="Grupo infantil">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>1 título</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="honor-column">
+            <h4>🥈 Más subcampeonatos</h4>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/infantil-2.png" alt="Grupo infantil">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>1 vez</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="honor-column">
+            <h4>🥉 Más terceros lugares</h4>
+
+            <div class="honor-item">
+              <img src="img/grupos/logos/infantil-3.png" alt="Grupo infantil">
+              <div>
+                <strong>Nombre del grupo</strong>
+                <span>1 vez</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="historic-table-section">
+      <div class="section-heading">
+        <span class="section-kicker">Resumen histórico</span>
+        <h2>Tabla de palmarés general</h2>
+      </div>
+
+      <div class="historic-table-wrapper">
+        <table class="historic-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Agrupación</th>
+              <th>🥇</th>
+              <th>🥈</th>
+              <th>🥉</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Sentimiento y Corazón</td>
+              <td>2</td>
+              <td>1</td>
+              <td>0</td>
+            </tr>
+
+            <tr>
+              <td>2</td>
+              <td>Tierra de Sol</td>
+              <td>2</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+
+            <tr>
+              <td>3</td>
+              <td>Mama Gusti</td>
+              <td>1</td>
+              <td>2</td>
+              <td>1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="history-strip">
+        <h2>Recorrido histórico</h2>
+
+        <div class="years-line">
+            <a href="ediciones/2017.html">2017</a>
+            <span></span>
+            <a href="ediciones/2018.html">2018</a>
+            <span></span>
+            <a href="ediciones/2019.html">2019</a>
+            <span></span>
+            <a href="ediciones/2020.html">2020</a>
+            <span></span>
+            <a href="ediciones/2023.html">2023</a>
+            <span></span>
+            <a href="ediciones/2024.html">2024</a>
+        </div>
+    </section>
+
+    <section class="section gray">
+      <span class="tag center">Ediciones</span>
+      <h2 class="section-title">Ediciones destacadas</h2>
+
+      <div class="cards">
+        <article class="card">
+          <img src="img/home/edicion-2017.jpg" alt="Edición 2017">
+          <div class="card-body">
+            <h3>Edición 2017</h3>
+            <p>Primera edición del concurso.</p>
+            <a href="ediciones/2017.html">Ver edición →</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="img/home/edicion-2018.jpg" alt="Edición 2018">
+          <div class="card-body">
+            <h3>Edición 2018</h3>
+            <p>Una nueva etapa para el concurso.</p>
+            <a href="ediciones/2018.html">Ver edición →</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="img/home/edicion-2019.jpg" alt="Edición 2019">
+          <div class="card-body">
+            <h3>Edición 2019</h3>
+            <p>Más agrupaciones y mayor alcance cultural.</p>
+            <a href="ediciones/2019.html">Ver edición →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="gallery-preview">
+        <span class="tag center">Galería</span>
+        <h2 class="section-title">Momentos que se viven en escena</h2>
+
+        <div class="gallery-grid">
+            <img class="big" src="img/home/galeria-1.jpg" alt="Presentación folklórica">
+            <img src="img/home/galeria-2.jpg" alt="Danza folklórica">
+            <img src="img/home/galeria-3.jpg" alt="Agrupación participante">
+            <img src="img/home/galeria-4.jpg" alt="Escenario del concurso">
+            <img src="img/home/galeria-5.jpg" alt="Público del concurso">
+        </div>
+
+        <a href="galeria.html" class="btn primary">Ver galería completa</a>
+    </section>
+
+    <section class="section winners">
+      <span class="tag center">Ganadores</span>
+      <h2 class="section-title">Ganadores históricos</h2>
+
+      <div class="winner-box">
+        <h3>Reconociendo el talento artístico</h3>
+        <p>
+          Conoce a las agrupaciones que han dejado huella en cada edición del concurso.
+        </p>
+        <a href="ganadores.html" class="btn primary">Ver ganadores</a>
+      </div>
+    </section>
+
+    <section class="video-section">
+        <span class="tag center">Video Destacado</span>
+        <h2 class="section-title">Vive la experiencia</h2>
+
+        <div class="video-container">
+            <iframe
+            src="https://www.youtube.com/embed/TU_VIDEO"
+            title="Catacaos Color y Tradición"
+            allowfullscreen>
+            </iframe>
+        </div>
+    </section>
+
+    <section class="social-section">
+        <div class="section-heading">
+            <span class="section-kicker">Organizador</span>
+            <h2>Grupo Folklórico Pasión y Sentimiento Cultural</h2>
+        </div>
+
+        <div class="social-icons-row">
+            <a href="https://facebook.com/" target="_blank" aria-label="Facebook">
+            <img src="img/redes/facebook.png" alt="Facebook">
+            </a>
+
+            <a href="https://instagram.com/" target="_blank" aria-label="Instagram">
+            <img src="img/redes/instagram.png" alt="Instagram">
+            </a>
+
+            <a href="https://youtube.com/" target="_blank" aria-label="YouTube">
+            <img src="img/redes/youtube.png" alt="YouTube">
+            </a>
+
+            <a href="https://tiktok.com/" target="_blank" aria-label="TikTok">
+            <img src="img/redes/tiktok.png" alt="TikTok">
+            </a>
+        </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-overlay">
+
+        <div class="footer-content">
+        <h2>Catacaos, Color y Tradición</h2>
+        <p class="footer-slogan">Arte • Cultura • Tradición</p>
+
+        <p class="footer-text">
+            Concurso de danzas y estampas folklóricas que promueve la identidad cultural peruana
+            desde Catacaos para todo el Perú.
+        </p>
+
+        <div class="footer-links">
+            <a href="historia.html">Historia</a>
+            <a href="ediciones.html">Ediciones</a>
+            <a href="ganadores.html">Ganadores</a>
+            <a href="galeria.html">Galería</a>
+        </div>
+
+        <div class="footer-social">
+            <a href="#">Facebook</a>
+            <a href="#">YouTube</a>
+            <a href="#">Instagram</a>
+        </div>
+
+        <p class="footer-location">Catacaos - Piura, Perú</p>
+        <p class="copy">© 2026 Catacaos, Color y Tradición. Todos los derechos reservados.</p>
+        </div>
+
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

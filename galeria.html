@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria | Catacaos, Color y Tradición</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="img/logo1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="header scrolled" id="header">
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <img src="img/logo.png" alt="Catacaos Color y Tradición">
+      <span>Catacaos, Color y Tradición</span>
+    </a>
+
+    <button class="menu-btn" id="menuBtn">☰</button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li class="dropdown">
+        <a href="ediciones.html">Ediciones ▾</a>
+        <ul class="dropdown-menu">
+            <li><a href="ediciones/2017.html">2017</a></li>
+            <li><a href="ediciones/2018.html">2018</a></li>
+            <li><a href="ediciones/2019.html">2019</a></li>
+            <li><a href="ediciones/2020.html">2020</a></li>
+            <li><a href="ediciones/2023.html">2023</a></li>
+            <li><a href="ediciones/2024.html">2024</a></li>
+        </ul>
+      </li>
+      <li><a href="ganadores.html">Ganadores</a></li>
+      <li><a href="galeria.html">Galería</a></li>
+      <li><a href="organizacion.html">Organización</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <section class="page-hero gallery-hero">
+    <div class="page-hero-content">
+      <span>Momentos en escena</span>
+      <h1>Galería</h1>
+      <p>Fotografías y recuerdos de las ediciones del concurso.</p>
+    </div>
+  </section>
+
+  <section class="gallery-page">
+    <div class="section-heading">
+      <span class="section-kicker">Archivo visual</span>
+      <h2>Imágenes que cuentan nuestra historia</h2>
+      <p>Una selección de momentos, agrupaciones, público y escenarios.</p>
+    </div>
+
+    <div class="gallery-filter">
+        <button class="active" data-filter="all">Todos</button>
+        <button data-filter="2017">2017</button>
+        <button data-filter="2018">2018</button>
+        <button data-filter="2019">2019</button>
+        <button data-filter="2020">2020</button>
+        <button data-filter="2023">2023</button>
+        <button data-filter="2024">2024</button>
+    </div>
+
+    <div class="gallery-masonry">
+        <img data-year="2017" src="img/galeria/2017-1.jpg" alt="Galería 2017">
+        <img data-year="2018" src="img/galeria/2018-1.jpg" alt="Galería 2018">
+        <img data-year="2019" src="img/galeria/2019-1.jpg" alt="Galería 2019">
+        <img data-year="2020" src="img/galeria/2020-1.jpg" alt="Galería 2020">
+        <img data-year="2023" src="img/galeria/2023-1.jpg" alt="Galería 2023">
+        <img data-year="2024" src="img/galeria/2024-1.jpg" alt="Galería 2024">
+        <img data-year="2024" src="img/galeria/2024-2.jpg" alt="Galería 2024">
+        <img data-year="2024" src="img/galeria/2024-3.jpg" alt="Galería 2024">
+
+      </div>
+
+      <div class="lightbox" id="lightbox">
+        <span id="closeLightbox">×</span>
+        <img id="lightboxImg" src="" alt="Imagen ampliada">
+      </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-overlay">
+    <div class="footer-content">
+      <h2>Catacaos, Color y Tradición</h2>
+      <p class="footer-slogan">Arte • Cultura • Tradición</p>
+
+      <div class="footer-links">
+        <a href="historia.html">Historia</a>
+        <a href="ediciones.html">Ediciones</a>
+        <a href="ganadores.html">Ganadores</a>
+        <a href="galeria.html">Galería</a>
+      </div>
+
+      <p class="footer-location">Catacaos - Piura, Perú</p>
+      <p class="copy">© 2026 Catacaos, Color y Tradición.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
