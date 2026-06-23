@@ -29,7 +29,7 @@ const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 
 if (countdown && daysEl && hoursEl && minutesEl && secondsEl) {
-  const targetDate = new Date("October 15, 2026 18:00:00").getTime();
+  const targetDate = new Date("October 25, 2026 18:00:00").getTime();
 
   setInterval(() => {
     const now = new Date().getTime();

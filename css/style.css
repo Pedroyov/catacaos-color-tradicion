@@ -3336,3 +3336,132 @@ body{ font-size:16px; }
 .share-btn:hover{
   transform:translateY(-2px);
 }
+
+.honors-note{
+  max-width:900px;
+  margin:25px auto 0;
+  text-align:center;
+  font-size:12px;
+  color:#666;
+  font-style:italic;
+  line-height:1.6;
+}
+
+.tiktok-video-wrapper{
+    display:flex;
+    justify-content:center;
+    margin-top:35px;
+}
+
+.video-credit{
+    text-align:center;
+    margin-top:15px;
+    color:#777;
+    font-size:14px;
+}
+
+.video-credit a{
+    color:#0B6677;
+    font-weight:700;
+    text-decoration:none;
+}
+
+/* =========================
+   ORGANIZADOR
+========================= */
+
+.social-section{
+    padding:90px 20px;
+    text-align:center;
+    background:linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f8f8f8 100%
+    );
+}
+
+.organizer-header{
+    max-width:800px;
+    margin:0 auto 40px;
+}
+
+.organizer-label{
+    display:inline-block;
+    padding:8px 18px;
+    background:#FFD700;
+    color:#111;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:18px;
+}
+
+.organizer-header h2{
+    font-size:24px;
+    color:#666;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.organizer-header h3{
+    font-size:46px;
+    color:#0B6677;
+    font-weight:800;
+    line-height:1.15;
+    margin-bottom:18px;
+}
+
+.organizer-header p{
+    font-size:17px;
+    color:#666;
+    line-height:1.7;
+}
+
+.social-icons-row{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    flex-wrap:wrap;
+}
+
+.social-icons-row a{
+    width:80px;
+    height:80px;
+    background:white;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    transition:.3s;
+}
+
+.social-icons-row a:hover{
+    transform:translateY(-8px);
+}
+
+.social-icons-row img{
+    width:40px;
+    height:40px;
+}
+
+.organizer-logo{
+    width:180px;
+    height:180px;
+    object-fit:contain;
+    margin:0 auto 25px;
+    display:block;
+}
+
+@media(max-width:768px){
+    .organizer-logo{
+        width:140px;
+        height:140px;
+    }
+
+    .organizer-header h3{
+        font-size:32px;
+    }
+}
