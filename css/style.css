@@ -7330,3 +7330,114 @@ body{ font-size:16px; }
     color:#666;
     line-height:1.7;
 }
+
+/* =========================
+   JURADO
+========================= */
+
+.jury-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:30px;
+    margin-top:50px;
+}
+
+.jury-card{
+    background:#fff;
+    border-radius:22px;
+    padding:25px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.10);
+    transition:.3s;
+}
+
+.jury-card:hover{
+    transform:translateY(-6px);
+}
+
+.jury-card img{
+    width:200px;
+    height:200px;
+    object-fit:cover;
+    border-radius:50%;
+    border:5px solid var(--color-primary);
+    margin-bottom:18px;
+}
+
+.jury-card h3{
+    color:var(--color-primary);
+    font-size:22px;
+    margin-bottom:8px;
+}
+
+.jury-card p{
+    color:#666;
+    font-size:15px;
+    line-height:1.6;
+}
+
+/* =========================
+   TABLAS RESPONSIVE
+========================= */
+
+.scores-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.scores-table table{
+    width:100%;
+}
+
+.scores-table th,
+.scores-table td{
+    white-space:nowrap;
+}
+
+@media(max-width:768px){
+
+    .scores-table{
+        display:block;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+        font-size:12px;
+    }
+
+    .scores-table th,
+    .scores-table td{
+        padding:8px 6px;
+    }
+
+    /* Columnas de puntajes */
+    .scores-table th:nth-child(n+3),
+    .scores-table td:nth-child(n+3){
+        width:50px;
+        text-align:center;
+    }
+
+    /* Agrupación */
+    .scores-table td:first-child{
+        min-width:100px;
+        white-space:normal;
+    }
+
+    /* Danza */
+    .scores-table td:nth-child(2){
+        min-width:120px;
+        white-space:normal;
+    }
+
+}
+
+.table-tip{
+  display:none;
+  font-size:13px;
+  color:#666;
+  margin:0 0 10px;
+}
+
+@media(max-width:768px){
+  .table-tip{
+    display:block;
+  }
+}
