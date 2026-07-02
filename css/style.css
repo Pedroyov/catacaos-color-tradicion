@@ -3595,6 +3595,15 @@ body{ font-size:16px; }
     font-weight:700;
 }
 
+.desclassified-row{
+    background:#f8e6e6;
+}
+
+.desclassified-row td:first-child{
+    border-left:5px solid #ce3b3b;
+    font-weight:700;
+}
+
 .gold-row{
     background:#FFF8D6;
 }
