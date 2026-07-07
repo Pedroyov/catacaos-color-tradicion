@@ -2163,6 +2163,9 @@ a{
   max-width:1200px;
   margin:auto;
   padding:80px 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .10);
+  border-radius: 27px;
+  background: #e6eff1;
 }
 
 .champion-box{
@@ -7513,7 +7516,7 @@ body{ font-size:16px; }
 
 .honorable-mentions{
     max-width:900px;
-    margin:45px auto 0;
+    margin:90px auto 0;
     padding:28px;
     background:#fff;
     border-radius:24px;
