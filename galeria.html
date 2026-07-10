@@ -1,44 +1,65 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Galeria | Catacaos, Color y Tradición</title>
+
+  <title>Galería | Catacaos, Color y Tradición</title>
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="img/logo1.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap"
+    rel="stylesheet"
+  >
 </head>
+
 <body>
 
 <header class="header scrolled" id="header">
   <nav class="navbar">
+
     <a href="index.html" class="logo">
-      <img src="img/logo.png" alt="Catacaos Color y Tradición">
+      <img src="img/logo.png" alt="Catacaos, Color y Tradición">
       <span>Catacaos, Color y Tradición</span>
     </a>
 
-    <button class="menu-btn" id="menuBtn">☰</button>
+    <button
+      class="menu-btn"
+      id="menuBtn"
+      type="button"
+      aria-label="Abrir menú"
+    >
+      ☰
+    </button>
 
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html">Inicio</a></li>
       <li><a href="historia.html">Historia</a></li>
+
       <li class="dropdown">
         <a href="ediciones.html">Ediciones ▾</a>
+
         <ul class="dropdown-menu">
-            <li><a href="ediciones/2017.html">2017</a></li>
-            <li><a href="ediciones/2018.html">2018</a></li>
-            <li><a href="ediciones/2019.html">2019</a></li>
-            <li><a href="ediciones/edicion-especial.html">2020</a></li>
-            <li><a href="ediciones/2023.html">2023</a></li>
-            <li><a href="ediciones/2024.html">2024</a></li>
+          <li><a href="ediciones/2017.html">2017</a></li>
+          <li><a href="ediciones/2018.html">2018</a></li>
+          <li><a href="ediciones/2019.html">2019</a></li>
+          <li><a href="ediciones/edicion-especial.html">2020</a></li>
+          <li><a href="ediciones/2023.html">2023</a></li>
+          <li><a href="ediciones/2024.html">2024</a></li>
         </ul>
       </li>
+
       <li><a href="ganadores.html">Ganadores</a></li>
       <li><a href="galeria.html">Galería</a></li>
       <li><a href="organizacion.html">Organización</a></li>
     </ul>
+
   </nav>
 </header>
 
@@ -53,115 +74,68 @@
   </section>
 
   <section class="gallery-page">
+
     <div class="section-heading">
       <span class="section-kicker">Archivo visual</span>
       <h2>Imágenes que cuentan nuestra historia</h2>
-      <p>Una selección de momentos, agrupaciones, público y escenarios.</p>
+      <p>
+        Una selección de momentos, agrupaciones, público y escenarios.
+      </p>
     </div>
 
-    <div class="gallery-filter">
-        <button class="active" data-filter="all">Todos</button>
-        <button data-filter="2017">2017</button>
-        <button data-filter="2018">2018</button>
-        <button data-filter="2019">2019</button>
-        <button data-filter="2020">2020</button>
-        <button data-filter="2023">2023</button>
-        <button data-filter="2024">2024</button>
+    <!-- Filtros -->
+    <div class="gallery-filter" id="galleryFilter">
+      <button type="button" class="active" data-filter="all">
+        Todos
+      </button>
+
+      <button type="button" data-filter="2017">2017</button>
+      <button type="button" data-filter="2018">2018</button>
+      <button type="button" data-filter="2019">2019</button>
+      <button type="button" data-filter="2020">2020</button>
+      <button type="button" data-filter="2023">2023</button>
+      <button type="button" data-filter="2024">2024</button>
     </div>
 
-    <div class="gallery-masonry">
-        <img data-year="2017" src="img/galeria/2017-1.jpg" alt="Galería 2017">
-        <img data-year="2018" src="img/galeria/2018-1.jpg" alt="Galería 2018">
-        <img data-year="2024" src="img/galeria/2024-12.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-11.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-4.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-5.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-6.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-7.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-8.jpg" alt="Galería 2024">
-        <img data-year="2023" src="img/galeria/2023-1.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-2.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-3.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-4.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-5.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-6.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-7.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-8.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-9.jpg" alt="Galería 2023">
-        <img data-year="2019" src="img/galeria/2019-1.jpg" alt="Galería 2019">
-        <img data-year="2024" src="img/galeria/2024-10.jpg" alt="Galería 2024">
-        <img data-year="2020" src="img/galeria/2020-1.jpg" alt="Galería 2020">
-        <img data-year="2023" src="img/galeria/2023-10.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-11.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-12.jpg" alt="Galería 2023">
-        <img data-year="2023" src="img/galeria/2023-15.jpg" alt="Galería 2023">
-        <img data-year="2024" src="img/galeria/2024-1.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-2.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-3.jpg" alt="Galería 2024">
-        <img data-year="2024" src="img/galeria/2024-9.jpg" alt="Galería 2024">
-        <img data-year="2017" src="img/galeria/2017-13.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-14.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-15.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-16.jpg" alt="Galería 2017">
+    <!--
+      Las fotografías serán creadas automáticamente
+      mediante JavaScript.
+    -->
+    <div
+      class="gallery-masonry"
+      id="galleryMasonry"
+      aria-live="polite"
+    ></div>
 
-        <img data-year="2018" src="img/galeria/2018-2.jpg" alt="Galería 2018">
-        <img data-year="2017" src="img/galeria/2017-2.jpg" alt="Galería 2017">
+    <!-- Mensaje en caso de que un filtro no tenga fotografías -->
+    <p class="gallery-empty" id="galleryEmpty" hidden>
+      Todavía no hay fotografías disponibles para esta edición.
+    </p>
 
-        <img data-year="2017" src="img/galeria/2017-27.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-28.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-29.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-30.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-31.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-32.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-33.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-34.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-35.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-36.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-37.jpg" alt="Galería 2017">
+    <!-- Visor de imagen ampliada -->
+    <div
+      class="lightbox"
+      id="lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Imagen ampliada"
+    >
+      <button
+        type="button"
+        class="lightbox-close"
+        id="closeLightbox"
+        aria-label="Cerrar imagen"
+      >
+        ×
+      </button>
 
-        <img data-year="2017" src="img/galeria/2017-17.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-18.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-19.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-20.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-21.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-22.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-23.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-24.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-25.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-26.jpg" alt="Galería 2017">
-        <img data-year="2018" src="img/galeria/2018-3.jpg" alt="Galería 2018">
-        <img data-year="2017" src="img/galeria/2017-3.jpg" alt="Galería 2017">
-        <img data-year="2018" src="img/galeria/2018-4.jpg" alt="Galería 2018">
-        <img data-year="2017" src="img/galeria/2017-5.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-6.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-7.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-8.jpg" alt="Galería 2017">
+      <img
+        id="lightboxImg"
+        src=""
+        alt="Imagen ampliada"
+      >
+    </div>
 
-
-
-
-
-        <img data-year="2018" src="img/galeria/2018-5.jpg" alt="Galería 2018">
-        <img data-year="2018" src="img/galeria/2018-6.jpg" alt="Galería 2018">
-        <img data-year="2018" src="img/galeria/2018-7.jpg" alt="Galería 2018">
-        <img data-year="2019" src="img/galeria/2019-2.jpg" alt="Galería 2019">
-        <img data-year="2019" src="img/galeria/2019-3.jpg" alt="Galería 2019">
-        <img data-year="2019" src="img/galeria/2019-4.jpg" alt="Galería 2019">
-        <img data-year="2017" src="img/galeria/2017-4.jpg" alt="Galería 2017">
-        <img data-year="2018" src="img/galeria/2018-8.jpg" alt="Galería 2018">
-        <img data-year="2020" src="img/galeria/2020-2.jpg" alt="Galería 2020">
-        <img data-year="2020" src="img/galeria/2020-3.jpg" alt="Galería 2020">
-        <img data-year="2017" src="img/galeria/2017-9.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-10.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-11.jpg" alt="Galería 2017">
-        <img data-year="2017" src="img/galeria/2017-12.jpg" alt="Galería 2017">
-
-      </div>
-
-      <div class="lightbox" id="lightbox">
-        <span id="closeLightbox">×</span>
-        <img id="lightboxImg" src="" alt="Imagen ampliada">
-      </div>
   </section>
 
 </main>
@@ -169,22 +143,39 @@
 <footer class="footer">
   <div class="footer-overlay">
     <div class="footer-content">
+
       <h2>Catacaos, Color y Tradición</h2>
-      <p class="footer-slogan">Arte • Cultura • Tradición</p>
+
+      <p class="footer-slogan">
+        Arte • Cultura • Tradición
+      </p>
 
       <div class="footer-links">
         <a href="historia.html">Historia</a>
         <a href="ediciones.html">Ediciones</a>
         <a href="ganadores.html">Ganadores</a>
         <a href="galeria.html">Galería</a>
+        <a href="organizacion.html">Organización</a>
       </div>
 
-      <p class="footer-location">Catacaos - Piura, Perú</p>
-      <p class="copy">© 2026 Catacaos, Color y Tradición.</p>
+      <p class="footer-location">
+        Catacaos - Piura, Perú
+      </p>
+
+      <p class="copy">
+        © 2026 Catacaos, Color y Tradición.
+      </p>
+
     </div>
   </div>
 </footer>
 
+<!-- Funciones generales de la web -->
 <script src="js/main.js"></script>
+
+<!-- Funciones exclusivas de la galería -->
+<script src="js/galeria.js"></script>
+
 </body>
 </html>
+```

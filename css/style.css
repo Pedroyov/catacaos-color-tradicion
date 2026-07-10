@@ -7579,3 +7579,37 @@ body{ font-size:16px; }
         max-width:280px;
     }
 }
+
+/* =========================
+   GALERÍA DINÁMICA
+========================= */
+
+.gallery-masonry img[hidden]{
+  display:none;
+}
+
+.gallery-empty{
+  text-align:center;
+  color:#666;
+  font-size:16px;
+  padding:40px 20px;
+}
+
+.lightbox-close{
+  position:absolute;
+  top:20px;
+  right:30px;
+  z-index:2;
+
+  background:transparent;
+  border:none;
+  color:white;
+
+  font-size:48px;
+  line-height:1;
+  cursor:pointer;
+}
+
+body.lightbox-open{
+  overflow:hidden;
+}
