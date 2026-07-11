@@ -25,12 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * 2017-37.jpg
    */
   const galleryYears = {
-    2024: 12,
+    2024: 162,
     2023: 165,
     2020: 3,
     2019: 4,
     2018: 150,
-    2017: 37
+    2017: 36
   };
 
   /**
