@@ -8464,3 +8464,148 @@ body.lightbox-open{
     min-height: 220px;
   }
 }
+
+/* =========================================================
+   RANKINGS HISTÓRICOS
+========================================================= */
+
+.stats-ranking {
+  background: #ffffff;
+}
+
+.stats-ranking-alt {
+  background: #f6f3ed;
+}
+
+.stats-ranking-grid {
+  display: grid;
+  gap: 14px;
+  max-width: 980px;
+  margin: 40px auto 0;
+}
+
+.ranking-card {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 18px 22px;
+  background: #ffffff;
+  border: 1px solid rgba(31, 42, 55, 0.1);
+  border-left: 6px solid var(--primary, #9f2629);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(31, 42, 55, 0.07);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ranking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(31, 42, 55, 0.11);
+}
+
+.ranking-position {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: #17242c;
+  background: #ffd000;
+  border-radius: 50%;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.ranking-info h3 {
+  margin: 0;
+  color: #0b6d7c;
+  font-size: 1rem;
+}
+
+.ranking-info p {
+  margin: 5px 0 0;
+  color: #68717b;
+  font-size: 0.85rem;
+}
+
+.ranking-values {
+  min-width: 140px;
+  text-align: right;
+}
+
+.ranking-values strong {
+  display: block;
+  color: var(--primary, #9f2629);
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.ranking-values span,
+.ranking-values small {
+  display: block;
+  margin-top: 4px;
+  color: #68717b;
+}
+
+.ranking-values span {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ranking-values small {
+  font-size: 0.75rem;
+}
+
+@media (max-width: 650px) {
+  .ranking-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .ranking-values {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+.map-region-active.heat-level-1 {
+  fill: #f4c75b;
+}
+
+.map-region-active.heat-level-2 {
+  fill: #e5a63c;
+}
+
+.map-region-active.heat-level-3 {
+  fill: #d56d35;
+}
+
+.map-region-active.heat-level-4 {
+  fill: #b83932;
+}
+
+.map-region-active.heat-level-5 {
+  fill: #7d1f28;
+}
+
+.heat-1 {
+  background: #f4c75b;
+}
+
+.heat-2 {
+  background: #e5a63c;
+}
+
+.heat-3 {
+  background: #d56d35;
+}
+
+.heat-4 {
+  background: #b83932;
+}
+
+.heat-5 {
+  background: #7d1f28;
+}

@@ -586,6 +586,14 @@ const groupsBlockTitle = document.getElementById(
   "groups-block-title"
 );
 
+const provinceRanking = document.getElementById(
+  "province-ranking"
+);
+
+const groupRanking = document.getElementById(
+  "group-ranking"
+);
+
 /*
 |--------------------------------------------------------------------------
 | Funciones de cálculo
@@ -732,6 +740,15 @@ function prepareMap() {
     mapRegion.classList.add(
       "map-region-active"
     );
+
+    const totals = getRegionTotals(regionData);
+
+    mapRegion.classList.add(
+    getHeatLevel(totals.participaciones)
+    );
+
+    mapRegion.dataset.participaciones =
+    totals.participaciones;
 
     mapRegion.setAttribute("tabindex", "0");
     mapRegion.setAttribute("role", "button");
@@ -1120,6 +1137,176 @@ function escapeHtml(value) {
   return element.innerHTML;
 }
 
+function getProvinceRanking() {
+  const provinces = new Map();
+
+  Object.values(regiones).forEach((region) => {
+    region.agrupaciones.forEach((group) => {
+      const key = `${group.provincia}-${region.nombre}`;
+
+      if (!provinces.has(key)) {
+        provinces.set(key, {
+          provincia: group.provincia,
+          region: region.nombre,
+          participaciones: 0,
+          agrupaciones: new Set(),
+          titulos: 0
+        });
+      }
+
+      const province = provinces.get(key);
+
+      province.participaciones += group.participaciones;
+      province.titulos += group.titulos;
+      province.agrupaciones.add(group.nombre);
+    });
+  });
+
+  return Array.from(provinces.values())
+    .map((province) => ({
+      ...province,
+      agrupaciones: province.agrupaciones.size
+    }))
+    .sort(
+      (a, b) =>
+        b.participaciones - a.participaciones ||
+        b.titulos - a.titulos
+    );
+}
+
+function getGroupRanking() {
+  const groups = [];
+
+  Object.values(regiones).forEach((region) => {
+    region.agrupaciones.forEach((group) => {
+      groups.push({
+        nombre: group.nombre,
+        provincia: group.provincia,
+        region: region.nombre,
+        participaciones: group.participaciones,
+        titulos: group.titulos
+      });
+    });
+  });
+
+  return groups.sort(
+    (a, b) =>
+      b.participaciones - a.participaciones ||
+      b.titulos - a.titulos ||
+      a.nombre.localeCompare(b.nombre)
+  );
+}
+
+function renderProvinceRanking() {
+  if (!provinceRanking) {
+    return;
+  }
+
+  const ranking = getProvinceRanking().slice(0, 10);
+
+  provinceRanking.innerHTML = ranking
+    .map(
+      (province, index) => `
+        <article class="ranking-card">
+          <span class="ranking-position">
+            ${index + 1}
+          </span>
+
+          <div class="ranking-info">
+            <h3>${escapeHtml(province.provincia)}</h3>
+
+            <p>
+              ${escapeHtml(province.region)}
+            </p>
+          </div>
+
+          <div class="ranking-values">
+            <strong>
+              ${province.participaciones}
+            </strong>
+
+            <span>
+              participaciones
+            </span>
+
+            <small>
+              ${province.agrupaciones}
+              agrupación${
+                province.agrupaciones === 1 ? "" : "es"
+              }
+            </small>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderGroupRanking() {
+  if (!groupRanking) {
+    return;
+  }
+
+  const ranking = getGroupRanking().slice(0, 10);
+
+  groupRanking.innerHTML = ranking
+    .map(
+      (group, index) => `
+        <article class="ranking-card">
+          <span class="ranking-position">
+            ${index + 1}
+          </span>
+
+          <div class="ranking-info">
+            <h3>${escapeHtml(group.nombre)}</h3>
+
+            <p>
+              ${escapeHtml(group.provincia)}
+              ·
+              ${escapeHtml(group.region)}
+            </p>
+          </div>
+
+          <div class="ranking-values">
+            <strong>
+              ${group.participaciones}
+            </strong>
+
+            <span>
+              participaciones
+            </span>
+
+            <small>
+              ${group.titulos}
+              título${group.titulos === 1 ? "" : "s"}
+            </small>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function getHeatLevel(participations) {
+  if (participations >= 30) {
+    return "heat-level-5";
+  }
+
+  if (participations >= 15) {
+    return "heat-level-4";
+  }
+
+  if (participations >= 6) {
+    return "heat-level-3";
+  }
+
+  if (participations >= 3) {
+    return "heat-level-2";
+  }
+
+  return "heat-level-1";
+}
+
 /*
 |--------------------------------------------------------------------------
 | Inicialización
@@ -1131,6 +1318,8 @@ document.addEventListener(
   () => {
     renderGeneralTotals();
     renderTable();
+    renderProvinceRanking();
+    renderGroupRanking();
     loadMap();
 
     resetButton?.addEventListener(
