@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ganadores | Catacaos, Color y Tradición</title>
+  <meta name="description"
+    content="Ganadores históricos del concurso Catacaos, Color y Tradición desde su primera edición."> 
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="img/logo1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta property="og:title" content="Catacaos, Color y Tradición">
+  <meta property="og:description" content="Concurso nacional de danzas folclóricas.">
+  <meta property="og:image" content="https://pedroyov.github.io/catacaos-color-tradicion/img/logo.png">
+  <meta property="og:url" content="https://pedroyov.github.io/catacaos-color-tradicion/">
+  <meta property="og:type" content="website">
+</head>
+<body>
+
+<header class="header scrolled" id="header">
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <img src="img/logo.png" alt="Catacaos Color y Tradición">
+      <span>Catacaos, Color y Tradición</span>
+    </a>
+
+    <button class="menu-btn" id="menuBtn">☰</button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li class="dropdown">
+        <a href="ediciones.html">Ediciones ▾</a>
+        <ul class="dropdown-menu">
+            <li><a href="ediciones/2017.html">2017</a></li>
+            <li><a href="ediciones/2018.html">2018</a></li>
+            <li><a href="ediciones/2019.html">2019</a></li>
+            <li><a href="ediciones/edicion-especial.html">2020</a></li>
+            <li><a href="ediciones/2023.html">2023</a></li>
+            <li><a href="ediciones/2024.html">2024</a></li>
+        </ul>
+      </li>
+      <li><a href="ganadores.html">Ganadores</a></li>
+      <li><a href="galeria.html">Galería</a></li>
+      <li><a href="organizacion.html">Organización</a></li>
+      <li><a href="mapa.html">estadisticas</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="page-hero map-hero">
+    <div class="container">
+      <span class="section-kicker">Participación nacional</span>
+
+      <h1>Estadísticas</h1>
+
+      <p>
+        Conoce las regiones, provincias y agrupaciones que han formado parte
+        de la historia de Catacaos, Color y Tradición.
+      </p>
+    </div>
+  </section>
+
+  <!-- RESUMEN -->
+  <section class="map-summary section">
+    <div class="container">
+
+      <div class="section-heading">
+        <span class="section-kicker">Presencia nacional</span>
+        <h2>Un concurso que une culturas</h2>
+        <p>
+          Selecciona una región del mapa para conocer sus participaciones,
+          provincias y agrupaciones representantes.
+        </p>
+      </div>
+
+      <div class="map-stats">
+        <article class="map-stat">
+          <strong id="total-regiones">0</strong>
+          <span>Regiones participantes</span>
+        </article>
+
+        <article class="map-stat">
+          <strong id="total-provincias">0</strong>
+          <span>Provincias representadas</span>
+        </article>
+
+        <article class="map-stat">
+          <strong id="total-agrupaciones">0</strong>
+          <span>Agrupaciones</span>
+        </article>
+
+        <article class="map-stat">
+          <strong id="total-participaciones">0</strong>
+          <span>Participaciones</span>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAPA INTERACTIVO -->
+  <section class="map-section section">
+    <div class="container">
+
+      <div class="map-layout">
+
+        <!-- Columna del mapa -->
+        <div class="peru-map-card">
+
+          <div class="map-card-header">
+            <div>
+              <span class="section-kicker">Mapa interactivo</span>
+              <h2>Regiones participantes</h2>
+            </div>
+
+            <button
+              type="button"
+              class="map-reset"
+              id="map-reset"
+              hidden
+            >
+              Ver todo el Perú
+            </button>
+          </div>
+
+          <div class="map-legend">
+            <span>
+              <i class="legend-color legend-active"></i>
+              Participó
+            </span>
+
+            <span>
+              <i class="legend-color legend-inactive"></i>
+              Sin participación
+            </span>
+          </div>
+
+          <div
+            id="peru-map"
+            class="peru-map"
+            aria-label="Mapa interactivo del Perú"
+          >
+            <!-- Aquí se cargará img/mapa-peru.svg -->
+          </div>
+
+          <p class="map-instruction">
+            Selecciona una región coloreada para consultar su información.
+          </p>
+
+        </div>
+
+        <!-- Columna de información -->
+        <aside class="region-panel" id="region-panel">
+
+          <div class="region-empty" id="region-empty">
+            <div class="region-empty-icon">⌖</div>
+
+            <span class="section-kicker">Explora el mapa</span>
+
+            <h2>Selecciona una región</h2>
+
+            <p>
+              Aquí aparecerán sus provincias, agrupaciones, años de
+              participación y resultados históricos.
+            </p>
+          </div>
+
+          <div class="region-content" id="region-content" hidden>
+
+            <div class="region-title">
+              <span class="section-kicker">Región participante</span>
+              <h2 id="region-name"></h2>
+              <p id="region-description"></p>
+            </div>
+
+            <div class="region-numbers">
+              <article>
+                <strong id="region-provinces-count">0</strong>
+                <span>Provincias</span>
+              </article>
+
+              <article>
+                <strong id="region-groups-count">0</strong>
+                <span>Agrupaciones</span>
+              </article>
+
+              <article>
+                <strong id="region-participations-count">0</strong>
+                <span>Participaciones</span>
+              </article>
+
+              <article>
+                <strong id="region-titles-count">0</strong>
+                <span>Títulos</span>
+              </article>
+            </div>
+
+            <div class="region-block">
+              <h3 id="province-block-title">Provincias representadas</h3>
+              <div class="region-tags" id="region-provinces"></div>
+            </div>
+
+            <div class="region-block">
+              <h3 id="groups-block-title">Agrupaciones participantes</h3>
+              <div
+                class="region-groups"
+                id="region-groups"
+              ></div>
+            </div>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TABLA GENERAL -->
+  <section class="map-ranking section">
+    <div class="container">
+
+      <div class="section-heading">
+        <span class="section-kicker">Resumen histórico</span>
+        <h2>Participación por región</h2>
+        <p>
+          Datos acumulados de todas las ediciones del concurso.
+        </p>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="map-table">
+          <thead>
+            <tr>
+              <th>Región</th>
+              <th>Provincias</th>
+              <th>Agrupaciones</th>
+              <th>Participaciones</th>
+              <th>Títulos</th>
+            </tr>
+          </thead>
+
+          <tbody id="regions-table-body">
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-overlay">
+    <div class="footer-content">
+      <h2>Catacaos, Color y Tradición</h2>
+      <p class="footer-slogan">Arte • Cultura • Tradición</p>
+
+      <div class="footer-links">
+        <a href="historia.html">Historia</a>
+        <a href="ediciones.html">Ediciones</a>
+        <a href="ganadores.html">Ganadores</a>
+        <a href="galeria.html">Galería</a>
+      </div>
+
+      <p class="footer-location">Catacaos - Piura, Perú</p>
+      <p class="copy">© 2026 Catacaos, Color y Tradición.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/mapa.js"></script>
+</body>
+</html>
