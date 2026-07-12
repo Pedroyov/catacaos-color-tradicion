@@ -8609,3 +8609,126 @@ body.lightbox-open{
 .heat-5 {
   background: #7d1f28;
 }
+
+/* =========================================================
+   MAPA DE PROVINCIAS DE PIURA
+========================================================= */
+
+.province-map-loading {
+  padding: 40px;
+  color: #0b6d7c;
+  font-weight: 700;
+  text-align: center;
+}
+
+.piura-province-path {
+  stroke: #ffffff;
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    fill 0.22s ease,
+    filter 0.22s ease,
+    transform 0.22s ease;
+}
+
+.piura-province-active {
+  fill: #0b6d7c !important;
+  cursor: pointer;
+}
+
+.piura-province-active:hover,
+.piura-province-active:focus-visible {
+  fill: #ffd000 !important;
+  filter:
+    drop-shadow(
+      0 7px 7px rgba(23, 36, 44, 0.24)
+    );
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.piura-province-selected {
+  fill: #b3262d !important;
+  filter:
+    drop-shadow(
+      0 8px 8px rgba(23, 36, 44, 0.28)
+    );
+}
+
+.piura-province-inactive {
+  fill: #d9dde1 !important;
+  cursor: default;
+}
+
+.province-map-label {
+  pointer-events: none;
+  fill: #17242c;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#peru-map svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+/* Mapa de Piura más grande */
+
+#peru-map.piura-mode {
+  min-height: 610px;
+}
+
+#peru-map.piura-mode svg {
+  width: 118%;
+  max-width: 760px;
+  transform: scale(1.08);
+  transform-origin: center;
+}
+
+/* Transición entre mapas */
+
+#peru-map {
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
+}
+
+#peru-map.map-transition-out {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+#peru-map.map-transition-in {
+  animation: mapEnter 0.35s ease;
+}
+
+@keyframes mapEnter {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 760px) {
+  #peru-map.piura-mode {
+    min-height: 470px;
+  }
+
+  #peru-map.piura-mode svg {
+    width: 110%;
+    max-width: 540px;
+    transform: scale(1.03);
+  }
+}

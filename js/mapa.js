@@ -594,6 +594,21 @@ const groupRanking = document.getElementById(
   "group-ranking"
 );
 
+const piuraProvinceNames = {
+  ayabaca: "Ayabaca",
+  huancabamba: "Huancabamba",
+  morropon: "Morropón",
+  paita: "Paita",
+  piura: "Piura",
+  sechura: "Sechura",
+  sullana: "Sullana",
+  talara: "Talara"
+};
+
+const mapTitle = document.getElementById(
+  "map-title"
+);
+
 /*
 |--------------------------------------------------------------------------
 | Funciones de cálculo
@@ -663,6 +678,18 @@ async function loadMap() {
     const svgContent = await response.text();
 
     mapContainer.innerHTML = svgContent;
+
+    window.PiuraMap?.close();
+
+    if (mapTitle) {
+    mapTitle.textContent =
+        "Regiones participantes";
+    }
+
+    if (resetButton) {
+    resetButton.textContent =
+        "Ver todo el Perú";
+    }
 
     prepareMap();
   } catch (error) {
@@ -792,9 +819,6 @@ function selectRegion(regionId) {
     return;
   }
 
-  provinceBlockTitle.textContent = "Provincias representadas";
-  groupsBlockTitle.textContent = "Agrupaciones participantes";
-
   const totals = getRegionTotals(region);
 
   document
@@ -805,9 +829,8 @@ function selectRegion(regionId) {
       );
     });
 
-  const selectedMapRegion = document.getElementById(
-    regionId
-  );
+  const selectedMapRegion =
+    document.getElementById(regionId);
 
   if (selectedMapRegion) {
     selectedMapRegion.classList.add(
@@ -816,7 +839,8 @@ function selectRegion(regionId) {
   }
 
   regionName.textContent = region.nombre;
-  regionDescription.textContent = region.descripcion;
+  regionDescription.textContent =
+    region.descripcion;
 
   provincesCount.textContent =
     region.provincias.length;
@@ -830,8 +854,56 @@ function selectRegion(regionId) {
   titlesCount.textContent =
     totals.titulos;
 
-  renderProvinces(region.provincias, regionId);
-  renderGroups(region.agrupaciones);
+  if (regionId === "PE-PIU") {
+    provincesContainer.innerHTML = "";
+
+    provinceBlockTitle.textContent =
+      "Provincias de Piura";
+
+    groupsBlockTitle.textContent =
+      "Selecciona una provincia";
+
+    groupsContainer.innerHTML = `
+      <div class="province-instruction">
+        <span class="province-instruction-icon">
+          ⌖
+        </span>
+
+        <div>
+          <strong>
+            Explora el mapa provincial
+          </strong>
+
+          <p>
+            Selecciona una provincia en el mapa
+            de la izquierda para conocer sus
+            agrupaciones, participaciones y títulos.
+          </p>
+        </div>
+      </div>
+    `;
+
+    window.PiuraMap?.open();
+  } else {
+    if (window.PiuraMap?.isActive()) {
+      loadMap();
+    }
+
+    provinceBlockTitle.textContent =
+      "Provincias representadas";
+
+    groupsBlockTitle.textContent =
+      "Agrupaciones participantes";
+
+    renderProvinces(
+      region.provincias,
+      regionId
+    );
+
+    renderGroups(
+      region.agrupaciones
+    );
+  }
 
   emptyPanel.hidden = true;
   contentPanel.hidden = false;
@@ -1117,8 +1189,22 @@ function renderGeneralTotals() {
 */
 
 function resetMap() {
+  if (window.PiuraMap?.isActive()) {
+    window.PiuraMap.close();
+
+    loadMap();
+
+    contentPanel.hidden = true;
+    emptyPanel.hidden = false;
+    resetButton.hidden = true;
+
+    return;
+  }
+
   document
-    .querySelectorAll(".map-region-selected")
+    .querySelectorAll(
+      ".map-region-selected"
+    )
     .forEach((element) => {
       element.classList.remove(
         "map-region-selected"
@@ -1320,6 +1406,23 @@ document.addEventListener(
     renderTable();
     renderProvinceRanking();
     renderGroupRanking();
+
+    window.PiuraMap?.init({
+        mapContainer,
+        mapTitle,
+        resetButton,
+
+        availableProvinces:
+            regiones["PE-PIU"].provincias,
+
+        onProvinceSelect: (provinceName) => {
+            showProvince(
+            "PE-PIU",
+            provinceName
+            );
+        }
+    });
+
     loadMap();
 
     resetButton?.addEventListener(
