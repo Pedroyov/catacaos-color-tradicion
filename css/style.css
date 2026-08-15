@@ -8732,3 +8732,22 @@ body.lightbox-open{
     transform: scale(1.03);
   }
 }
+
+.install-app-btn {
+  padding: 12px 20px;
+  color: #ffffff;
+  background: #9f2629;
+  border: 0;
+  border-radius: 999px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.install-app-btn:hover {
+  background: #7d1f28;
+  transform: translateY(-2px);
+}

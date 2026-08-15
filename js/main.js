@@ -141,6 +141,56 @@ if (shareBtn) {
   });
 }
 
+let deferredPrompt = null;
+
+const installAppBtn = document.getElementById(
+  "install-app-btn"
+);
+
+window.addEventListener(
+  "beforeinstallprompt",
+  (event) => {
+    event.preventDefault();
+
+    deferredPrompt = event;
+
+    if (installAppBtn) {
+      installAppBtn.hidden = false;
+    }
+  }
+);
+
+installAppBtn?.addEventListener(
+  "click",
+  async () => {
+    if (!deferredPrompt) {
+      return;
+    }
+
+    deferredPrompt.prompt();
+
+    const choice =
+      await deferredPrompt.userChoice;
+
+    if (choice.outcome === "accepted") {
+      installAppBtn.hidden = true;
+    }
+
+    deferredPrompt = null;
+  }
+);
+
+window.addEventListener(
+  "appinstalled",
+  () => {
+    deferredPrompt = null;
+
+    if (installAppBtn) {
+      installAppBtn.hidden = true;
+    }
+  }
+);
+
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
