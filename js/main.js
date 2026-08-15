@@ -29,7 +29,7 @@ const minutesEl = document.getElementById("minutes");
 const secondsEl = document.getElementById("seconds");
 
 if (countdown && daysEl && hoursEl && minutesEl && secondsEl) {
-  const targetDate = new Date("October 25, 2026 18:00:00").getTime();
+  const targetDate = new Date("October 25, 2026 12:00:00").getTime();
 
   setInterval(() => {
     const now = new Date().getTime();
@@ -192,10 +192,146 @@ window.addEventListener(
 );
 
 
+/* =========================================================
+   CUENTA REGRESIVA - CATACAOS 2026
+========================================================= */
+
+const countdownSection = document.getElementById(
+  "cuenta-regresiva"
+);
+
+const countdownGrid = document.getElementById(
+  "countdown-grid"
+);
+
+const countdownToday = document.getElementById(
+  "countdown-today"
+);
+
+const countdownTitle = document.getElementById(
+  "countdown-title"
+);
+
+const countdownDescription = document.getElementById(
+  "countdown-description"
+);
+
+const countdownDays = document.getElementById(
+  "countdown-days"
+);
+
+const countdownHours = document.getElementById(
+  "countdown-hours"
+);
+
+const countdownMinutes = document.getElementById(
+  "countdown-minutes"
+);
+
+const countdownSeconds = document.getElementById(
+  "countdown-seconds"
+);
+
+
+/*
+  Inicio del concurso:
+  25 de octubre de 2026 - 12:00 p. m.
+  Zona horaria Perú (-05:00)
+*/
+const CONTEST_DATE =
+  new Date("2026-10-25T12:00:00-05:00");
+
+const DAY_AFTER_CONTEST =
+  new Date("2026-10-26T00:00:00-05:00");
+
+
+function updateContestCountdown() {
+  if (!countdownSection) {
+    return;
+  }
+
+  const now = new Date();
+
+  /*
+    Desde el día siguiente al concurso,
+    dejamos de mostrar la cuenta regresiva.
+  */
+  if (now >= DAY_AFTER_CONTEST) {
+    countdownSection.hidden = true;
+    return;
+  }
+
+  /*
+    Durante el día del concurso.
+  */
+  const contestDayStart =
+    new Date("2026-10-25T00:00:00-05:00");
+
+  if (
+    now >= contestDayStart &&
+    now < DAY_AFTER_CONTEST
+  ) {
+    countdownGrid.hidden = true;
+    countdownToday.hidden = false;
+
+    countdownTitle.textContent =
+      "¡Hoy nos reencontramos con nuestra tradición!";
+
+    countdownDescription.textContent =
+      "Sigue el desarrollo del concurso y sus resultados oficiales desde esta página.";
+
+    return;
+  }
+
+  const difference =
+    CONTEST_DATE.getTime() - now.getTime();
+
+  if (difference <= 0) {
+    return;
+  }
+
+  const days = Math.floor(
+    difference / (1000 * 60 * 60 * 24)
+  );
+
+  const hours = Math.floor(
+    (difference / (1000 * 60 * 60)) % 24
+  );
+
+  const minutes = Math.floor(
+    (difference / (1000 * 60)) % 60
+  );
+
+  const seconds = Math.floor(
+    (difference / 1000) % 60
+  );
+
+  countdownDays.textContent =
+    String(days).padStart(2, "0");
+
+  countdownHours.textContent =
+    String(hours).padStart(2, "0");
+
+  countdownMinutes.textContent =
+    String(minutes).padStart(2, "0");
+
+  countdownSeconds.textContent =
+    String(seconds).padStart(2, "0");
+}
+
+
+updateContestCountdown();
+
+setInterval(
+  updateContestCountdown,
+  1000
+);
+
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("./service-worker.js")
+      .register("/catacaos-color-tradicion/service-worker.js")
       .then((registration) => {
         console.log(
           "Service Worker registrado:",
@@ -209,4 +345,64 @@ if ("serviceWorker" in navigator) {
         );
       });
   });
+}
+
+/* =========================================================
+   ESTADO EN VIVO DEL CONCURSO
+========================================================= */
+
+const contestLivePanel =
+  document.getElementById(
+    "contest-live-panel"
+  );
+
+const contestLiveStage =
+  document.getElementById(
+    "contest-live-stage"
+  );
+
+const contestLiveDetail =
+  document.getElementById(
+    "contest-live-detail"
+  );
+
+const contestLiveNext =
+  document.getElementById(
+    "contest-live-next"
+  );
+
+const contestLiveUpdate =
+  document.getElementById(
+    "contest-live-update"
+  );
+
+
+function renderContestLiveStatus(data) {
+  if (!contestLivePanel) {
+    return;
+  }
+
+  if (
+    data.mostrar !== "SI" ||
+    data.estado !== "EN_VIVO"
+  ) {
+    contestLivePanel.hidden = true;
+    return;
+  }
+
+  contestLiveStage.textContent =
+    data.etapa || "Concurso en desarrollo";
+
+  contestLiveDetail.textContent =
+    data.detalle || "";
+
+  contestLiveNext.textContent =
+    data.siguiente || "Próxima etapa por confirmar";
+
+  contestLiveUpdate.textContent =
+    data.ultima_actualizacion
+      ? `Actualizado ${data.ultima_actualizacion}`
+      : "";
+
+  contestLivePanel.hidden = false;
 }

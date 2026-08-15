@@ -204,7 +204,7 @@ const regiones = {
       },
       {
         nombre: "A.F. Identidad Cultural",
-        provincia: "Piura",
+        provincia: "Sullana",
         localidad: "San Vicente de Piedra Rodada",
         participaciones: 2,
         titulos: 0,
