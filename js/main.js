@@ -406,3 +406,52 @@ function renderContestLiveStatus(data) {
 
   contestLivePanel.hidden = false;
 }
+
+const CCYT_API_URL =
+  "https://script.google.com/macros/s/AKfycbwTqhcJttTFaip35tncMNJG_x18GmS3vbphfA4pVf0PAU3o78v8VUYn5JtvQ9DvGKqy/exec";
+
+
+async function loadContestLiveStatus() {
+  if (!contestLivePanel) {
+    return;
+  }
+
+  try {
+    const url =
+      `${CCYT_API_URL}?sheet=Estado&_=${Date.now()}`;
+
+    const response = await fetch(url, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Error al consultar el estado: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+
+    if (!result.ok) {
+      throw new Error(
+        result.error || "No se pudo leer el estado"
+      );
+    }
+
+    renderContestLiveStatus(result.data);
+  } catch (error) {
+    console.error(
+      "Error al cargar el estado del concurso:",
+      error
+    );
+  }
+}
+
+if (contestLivePanel) {
+  loadContestLiveStatus();
+
+  setInterval(
+    loadContestLiveStatus,
+    5000
+  );
+}
