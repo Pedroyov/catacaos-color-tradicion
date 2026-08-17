@@ -46,16 +46,20 @@
         <li><a href="index.html">Inicio</a></li>
         <li><a href="historia.html">Historia</a></li>
         <li class="dropdown">
-            <a href="ediciones.html">Ediciones ▾</a>
-            <ul class="dropdown-menu">
-                <li><a href="ediciones/2017.html">2017</a></li>
-                <li><a href="ediciones/2018.html">2018</a></li>
-                <li><a href="ediciones/2019.html">2019</a></li>
-                <li><a href="ediciones/edicion-especial.html">2020</a></li>
-                <li><a href="ediciones/2023.html">2023</a></li>
-                <li><a href="ediciones/2024.html">2024</a></li>
-                <li><a href="ediciones/2026-previas.html">Este Año 2026</a></li>
-            </ul>
+          <div class="dropdown-trigger">
+              <a href="ediciones.html">Ediciones</a>
+              <button type="button" class="dropdown-toggle" aria-label="Mostrar ediciones" aria-expanded="false">▾</button>
+          </div>
+
+          <ul class="dropdown-menu">
+              <li><a href="ediciones/2017.html">2017</a></li>
+              <li><a href="ediciones/2018.html">2018</a></li>
+              <li><a href="ediciones/2019.html">2019</a></li>
+              <li><a href="ediciones/edicion-especial.html">2020</a></li>
+              <li><a href="ediciones/2023.html">2023</a></li>
+              <li><a href="ediciones/2024.html">2024</a></li>
+              <li><a href="ediciones/2026-previas.html">Este Año 2026</a></li>
+          </ul>
         </li>
         <li><a href="ganadores.html">Ganadores</a></li>
         <li><a href="galeria.html">Galería</a></li>
@@ -91,16 +95,48 @@
     </section>
 
     <section class="countdown-section reveal">
-      <h2>Próxima edición</h2>
-      <p>Muy pronto anunciaremos novedades del concurso.</p>
+
+      <h2>Catacaos, Color y Tradición 2026</h2>
+
+      <p>
+          Prepárate para vivir una nueva edición
+          este 25 de octubre.
+      </p>
 
       <div class="countdown" id="countdown">
-        <div><span id="days">00</span><small>Días</small></div>
-        <div><span id="hours">00</span><small>Horas</small></div>
-        <div><span id="minutes">00</span><small>Minutos</small></div>
-        <div><span id="seconds">00</span><small>Segundos</small></div>
+
+          <div>
+              <span id="days">00</span>
+              <small>Días</small>
+          </div>
+
+          <div>
+              <span id="hours">00</span>
+              <small>Horas</small>
+          </div>
+
+          <div>
+              <span id="minutes">00</span>
+              <small>Minutos</small>
+          </div>
+
+          <div>
+              <span id="seconds">00</span>
+              <small>Segundos</small>
+          </div>
+
       </div>
-    </section>
+
+      <a
+          href="ediciones/2026-previas.html"
+          class="countdown-edition-button"
+          id="countdown-edition-button"
+      >
+          Conoce más sobre la edición 2026
+          <span>→</span>
+      </a>
+
+  </section>
 
     <section class="section about reveal">
       <div class="section-text">

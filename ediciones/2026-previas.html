@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edición 2024 | Catacaos, Color y Tradición</title>
+    <title>Edición 2026 | Catacaos, Color y Tradición</title>
 
     <link rel="stylesheet" href="../css/previas.css">
     <link rel="stylesheet" href="../css/style.css">
@@ -32,7 +32,11 @@
                 <li><a href="../historia.html">Historia</a></li>
 
                 <li class="dropdown">
-                    <a href="../ediciones.html">Ediciones ▾</a>
+                    <div class="dropdown-trigger">
+                        <a href="../ediciones.html">Ediciones</a>
+                        <button type="button" class="dropdown-toggle" aria-label="Mostrar ediciones" aria-expanded="false">▾</button>
+                    </div>
+
                     <ul class="dropdown-menu">
                         <li><a href="2017.html">2017</a></li>
                         <li><a href="2018.html">2018</a></li>
@@ -79,7 +83,7 @@
 
 
         <!-- RESUMEN -->
-        <section class="edition-summary">
+        <section class="edition-summary pre-event-section">
 
             <div class="summary-grid">
 
@@ -108,7 +112,7 @@
         </section>
 
         <!-- CUENTA REGRESIVA -->
-        <section class="edition-countdown" id="cuenta-regresiva">
+        <section class="edition-countdown pre-event-section" id="cuenta-regresiva">
 
             <div class="countdown-inner">
 
@@ -166,8 +170,8 @@
 
         </section>
 
-        <!-- NAVEGACIÓN -->
-        <nav class="edition-subnav">
+        <!-- NAVEGACIÓN PREVIA -->
+        <nav class="edition-subnav pre-event-section">
 
             <a href="#informacion">
                 Información
@@ -181,23 +185,39 @@
                 Cronograma
             </a>
 
-            <a href="#grupos">
-                Grupos
+            <a href="#novedades">
+                Novedades
             </a>
 
-            <a href="#resultados">
-                Resultados
+            <a href="#mejores-danzantes">
+                Mejor Danzante
             </a>
 
-            <a href="#jurado">
-                Jurado
+            <a href="#campeon-campeones">
+                Campeón de Campeones
+            </a>
+
+            <a href="#preguntas">
+                Preguntas
             </a>
 
         </nav>
 
+        <div class="live-connection-warning" id="live-connection-warning" hidden>
+            <span>⚠</span>
+
+            <div>
+                <strong>No se pudo actualizar</strong>
+                <small>
+                    Conservamos los últimos resultados disponibles.
+                    Reintentando automáticamente...
+                </small>
+            </div>
+        </div>
+
 
         <!-- INFORMACIÓN -->
-        <section class="edition-story" id="informacion">
+        <section class="edition-story pre-event-section" id="informacion">
 
             <div class="section-heading">
 
@@ -250,7 +270,7 @@
 
 
         <!-- INSCRIPCIONES -->
-        <section class="active-registration-section" id="inscripciones">
+        <section class="active-registration-section pre-event-section" id="inscripciones">
 
             <div class="section-heading">
                 <span class="section-kicker">Participa</span>
@@ -334,7 +354,7 @@
         </section>
 
         <!-- CRONOGRAMA -->
-        <section class="edition-schedule" id="cronograma">
+        <section class="edition-schedule pre-event-section" id="cronograma">
 
             <div class="section-heading">
                 <span class="section-kicker">Programación</span>
@@ -464,7 +484,7 @@
                         <h3>Final Infantil</h3>
 
                         <p>
-                            Presentación final de las agrupaciones clasificadas
+                            Presentación final de las agrupaciones
                             de la categoría Infantil.
                         </p>
                     </div>
@@ -576,8 +596,64 @@
 
         </section>
 
+        <!-- NOVEDADES OFICIALES -->
+        <section class="edition-news pre-event-section" id="novedades">
+
+            <div class="section-heading">
+
+                <span class="section-kicker">
+                    Actualizaciones 2026
+                </span>
+
+                <h2>
+                    Novedades oficiales
+                </h2>
+
+                <p>
+                    Publicaremos aquí la información complementaria
+                    más importante antes del día del concurso.
+                </p>
+
+            </div>
+
+            <div class="edition-news-grid edition-news-grid-single">
+
+                <article class="edition-news-card featured-news">
+
+                    <div class="edition-news-icon">
+                        🎶
+                    </div>
+
+                    <div class="edition-news-content">
+
+                        <span class="edition-news-status">
+                            Próximamente
+                        </span>
+
+                        <h3>
+                            Lista de danzas para Mejor Danzante
+                        </h3>
+
+                        <p>
+                            Días antes del concurso se publicará la relación
+                            oficial de danzas y ritmos que formarán parte
+                            de la competencia de Mejor Danzante.
+                        </p>
+
+                        <button class="edition-news-button" type="button" disabled>
+                            Aún no disponible
+                        </button>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
         <!-- CONTACTO -->
-        <section class="edition-contact">
+        <section class="edition-contact pre-event-section" id="consultas">
 
             <div class="edition-contact-content">
 
@@ -602,7 +678,12 @@
                 <a href="https://wa.me/51983627392" class="edition-whatsapp-button" target="_blank"
                     rel="noopener noreferrer">
                     <i class="fa-brands fa-whatsapp"></i>
-                    Consultar por WhatsApp
+                    Consultar por WhatsApp 01
+                </a>
+                <a href="https://wa.me/51938592262" class="edition-whatsapp-button" target="_blank"
+                    rel="noopener noreferrer">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Consultar por WhatsApp 02
                 </a>
 
             </div>
@@ -610,7 +691,7 @@
         </section>
 
         <!-- MEJORES DANZANTES -->
-        <section class="best-dancers-info" id="mejores-danzantes">
+        <section class="best-dancers-info pre-event-section" id="mejores-danzantes">
 
             <div class="section-heading">
 
@@ -635,9 +716,12 @@
                     <h3>Prepárate para representar a tu agrupación</h3>
 
                     <p>
-                        Cada director o agrupación deberá haber seleccionado
-                        y preparado previamente a la pareja que los representará
-                        en la competencia de Mejor Danzante Masculino y Femenino.
+                        <p>
+                            Las agrupaciones que decidan participar deberán
+                            seleccionar y preparar previamente a la pareja
+                            que las representará en la competencia de
+                            Mejor Danzante Masculino y Femenino.
+                        </p>
                     </p>
                 </div>
 
@@ -718,7 +802,7 @@
         </section>
 
         <!-- CAMPEÓN DE CAMPEONES -->
-        <section class="champions-challenge" id="campeon-campeones">
+        <section class="champions-challenge pre-event-section" id="campeon-campeones">
 
             <div class="champions-challenge-inner">
 
@@ -771,40 +855,42 @@
                         <span>🏆</span>
 
                         <div>
-                            <h3>Campeones históricos</h3>
+                            <h3>Campeón de Campeones 2026</h3>
 
                             <p>
-                                Una competencia reservada para agrupaciones
-                                que cuentan con una plaza oficial dentro
-                                de esta categoría.
+                                La agrupación que obtenga el mayor puntaje
+                                será reconocida como Campeón de Campeones
+                                de esta edición.
                             </p>
                         </div>
                     </article>
 
 
                     <article>
-                        <span>🎭</span>
+                        <span>🛡️</span>
 
                         <div>
-                            <h3>Nueva presentación</h3>
+                            <h3>Permanencia</h3>
 
                             <p>
-                                Cada agrupación podrá presentar una danza
-                                o estampa folclórica representativa del Perú.
+                                Las agrupaciones competirán también por
+                                conservar su plaza dentro de esta categoría
+                                para la siguiente edición.
                             </p>
                         </div>
                     </article>
 
 
                     <article>
-                        <span>⭐</span>
+                        <span>🔥</span>
 
                         <div>
-                            <h3>Evaluación independiente</h3>
+                            <h3>Nuevos retadores</h3>
 
                             <p>
-                                Los resultados serán completamente
-                                independientes de la categoría general.
+                                La categoría General también permitirá definir
+                                nuevas plazas para Campeón de Campeones
+                                de la siguiente edición.
                             </p>
                         </div>
                     </article>
@@ -812,20 +898,497 @@
                 </div>
 
 
-                <div class="champions-participants">
+                <div class="champions-path">
 
-                    <span class="champions-participants-label">
-                        Participantes 2026
+                    <span class="champions-path-label">
+                        El camino continúa
                     </span>
 
                     <h3>
-                        Próximamente
+                        Del campeón general a Campeón de Campeones
                     </h3>
 
-                    <p>
-                        Las agrupaciones participantes serán presentadas
-                        oficialmente antes del concurso.
-                    </p>
+                    <div class="champions-path-flow">
+
+                        <div class="champions-path-step">
+                            <span>01</span>
+
+                            <strong>
+                                Categoría Danzas Nacionales 2026
+                            </strong>
+                        </div>
+
+                        <div class="champions-path-arrow">
+                            ↓
+                        </div>
+
+                        <div class="champions-path-step">
+                            <span>02</span>
+
+                            <strong>
+                                Ganador de Catacaos Color y Tradición 2026
+                            </strong>
+                        </div>
+
+                        <div class="champions-path-arrow">
+                            ↓
+                        </div>
+
+                        <div class="champions-path-step">
+                            <span>03</span>
+
+                            <strong>
+                                Plaza para Campeón de Campeones 2027
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="champions-path-note">
+
+                        <strong>¿Qué sucede si el campeón ya pertenece a esta categoría?</strong>
+
+                        <p>
+                            La plaza será otorgada a la agrupación mejor ubicada
+                            en la Final de Danzas Nacionales que todavía no forme parte
+                            de Campeón de Campeones.
+                        </p>
+
+                        <p>
+                            Para completar las cinco plazas de la siguiente edición,
+                            se considerará al siguiente mejor ubicado disponible
+                            de la categoría General.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PREGUNTAS FRECUENTES -->
+        <section class="faq-section pre-event-section" id="preguntas">
+
+            <div class="section-heading">
+
+                <span class="section-kicker">
+                    Información útil
+                </span>
+
+                <h2>
+                    Preguntas frecuentes
+                </h2>
+
+                <p>
+                    Resolvemos algunas de las principales dudas
+                    sobre Catacaos, Color y Tradición 2026.
+                </p>
+
+            </div>
+
+
+            <div class="faq-list">
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Dónde puedo consultar las bases completas?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Las bases oficiales de Catacaos, Color y
+                            Tradición 2026 se encuentran disponibles
+                            en esta misma página, dentro de la sección
+                            de inscripciones.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Cuántas agrupaciones clasifican por grupo?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Clasificarán entre
+                            <strong>2 y 3 agrupaciones por grupo</strong>,
+                            dependiendo de la cantidad de agrupaciones
+                            participantes y de la conformación final de
+                            los grupos.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Cuándo se conocerán los grupos de competencia?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Los grupos se conocerán después del
+                            <strong>sorteo oficial realizado el día
+                                del concurso</strong> y serán publicados
+                            en esta misma página.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Dónde podré ver los puntajes durante el concurso?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Los puntajes podrán seguirse
+                            <strong>en vivo desde esta misma página</strong>.
+                            Las tablas se actualizarán automáticamente
+                            durante el desarrollo de la competencia.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Cómo se conocerán los clasificados a las finales?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Conforme se oficialicen los resultados de
+                            las fases clasificatorias, las agrupaciones
+                            que avancen aparecerán en la sección
+                            <strong>Clasificados</strong> de esta página.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Dónde se publicará la lista de danzas para Mejor Danzante?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            La lista será publicada días antes del
+                            concurso en nuestras páginas oficiales
+                            y estará disponible también en la sección
+                            <strong>Novedades oficiales</strong>
+                            de esta página.
+                        </p>
+                    </div>
+
+                </details>
+
+                <!-- INFANTIL -->
+                <details class="faq-item">
+
+                    <summary>
+                        ¿La categoría Infantil tiene fase clasificatoria?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            No. La categoría Infantil se desarrollará
+                            directamente en una sola competencia final,
+                            donde se definirán las posiciones según
+                            los puntajes obtenidos.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <!-- CAPORALES -->
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Caporales también tendrá fase clasificatoria y final?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Sí. La categoría Caporales tendrá una
+                            <strong>fase clasificatoria por grupos</strong>
+                            y posteriormente una
+                            <strong>Gran Final</strong> con las agrupaciones
+                            clasificadas.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <!-- LLEGADA CAPORALES -->
+                <details class="faq-item">
+
+                    <summary>
+                        ¿A qué hora deben llegar los participantes de Caporales?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Para la reunión y el sorteo solo será necesaria
+                            la presencia del <strong>delegado de la agrupación</strong>.
+                            Los participantes podrán llegar antes del inicio
+                            de la categoría Caporales.
+                        </p>
+
+                        <p>
+                            Recomendamos revisar la programación publicada
+                            en esta página para calcular aproximadamente
+                            el inicio de la categoría, ya que el horario
+                            puede variar según el desarrollo del concurso.
+                        </p>
+
+                        <p>
+                            Las agrupaciones deberán considerar el tiempo
+                            necesario para cambiarse, alistarse y estar
+                            preparadas con anticipación para su presentación.
+                        </p>
+                    </div>
+
+                </details>
+
+                <details class="faq-item">
+
+                    <summary>
+                        ¿La programación publicada indica horarios exactos?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            No. Únicamente la <strong>hora de inicio del concurso</strong>
+                            es fija. Los horarios de las demás actividades y categorías
+                            son referenciales y pueden variar según el desarrollo del
+                            evento y la cantidad de agrupaciones inscritas en cada
+                            categoría.
+                        </p>
+
+                        <p>
+                            Recomendamos revisar la programación y considerar siempre
+                            un tiempo prudente de anticipación antes de la participación
+                            de cada agrupación.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <!-- MEJOR DANZANTE: OBLIGATORIEDAD -->
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Es obligatorio participar en Mejor Danzante?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            No. La participación en la competencia de
+                            <strong>Mejor Danzante es opcional</strong>.
+                        </p>
+
+                        <p>
+                            Las agrupaciones que decidan participar deberán
+                            haber designado y preparado previamente a la pareja
+                            que las representará en esta competencia.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <!-- REPRESENTANTES -->
+                <details class="faq-item">
+
+                    <summary>
+                        ¿Quién representa a la agrupación en Mejor Danzante?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            El director o responsable de cada agrupación
+                            deberá haber designado y preparado previamente
+                            a la pareja que representará a su grupo en
+                            esta competencia.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <!-- MODALIDAD MEJOR DANZANTE -->
+                <details class="faq-item">
+
+                    <summary>
+                        ¿La competencia de Mejor Danzante es por pareja o individual?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            La <strong>primera ronda se realizará en pareja</strong>.
+                            A partir de las siguientes rondas, la competencia
+                            continuará de manera <strong>individual</strong>.
+                        </p>
+
+                        <p>
+                            Durante la competencia también se incluirán
+                            <strong>dos ritmos o danzas sorpresa</strong>.
+                        </p>
+                    </div>
+
+                </details>
+
+
+                <details class="faq-item">
+
+                    <summary>
+                        Tengo otra consulta, ¿cómo puedo comunicarme?
+                    </summary>
+
+                    <div class="faq-answer">
+                        <p>
+                            Si tienes una consulta que no se encuentra
+                            resuelta aquí o en las bases, puedes
+                            comunicarte directamente con la organización
+                            mediante nuestro canal de WhatsApp.
+                        </p>
+
+                        <a href="#consultas" class="faq-contact-link">
+                            Ir a consultas
+                        </a>
+                    </div>
+
+                </details>
+
+            </div>
+
+        </section>
+
+        <!-- AVISO PREVIO A RESULTADOS -->
+        <section class="evaluation-preview" id="evaluation-preview">
+            <div class="results-waiting">
+
+                <div class="results-waiting-icon">
+                    🏆
+                </div>
+
+                <span class="results-waiting-status">
+                    Resultados en vivo
+                </span>
+
+                <h3>
+                    Regresa aquí el día del concurso
+                </h3>
+
+                <p>
+                    Desde las 11:00 a. m. podrás seguir los grupos,
+                    puntajes, clasificados y resultados oficiales
+                    de Catacaos, Color y Tradición 2026.
+                </p>
+
+                <div class="results-waiting-live">
+                    <i></i>
+                    Actualización automática durante el evento
+                </div>
+
+            </div>
+        </section>
+
+
+
+
+        <nav class="live-event-nav live-event-section" id="live-event-nav">
+            <a href="#seguimiento-en-vivo">
+                <span class="live-nav-dot"></span>
+                En vivo
+            </a>
+
+            <a href="#grupos">
+                Grupos
+            </a>
+
+            <a href="#clasificados">
+                Clasificados
+            </a>
+
+            <a href="#resultados">
+                Resultados
+            </a>
+
+            <a href="#jurado">
+                Jurado
+            </a>
+        </nav>
+
+        <!-- SEGUIMIENTO EN VIVO -->
+        <section class="contest-live-section live-event-section" id="seguimiento-en-vivo">
+
+            <div class="live-global-update" id="live-global-update" hidden>
+                <span class="live-global-dot"></span>
+
+                <span>
+                    Última actualización:
+                    <strong id="live-global-update-time">--:--</strong>
+                </span>
+            </div>
+
+            <div class="contest-live-panel" id="contest-live-panel" hidden>
+
+                <div class="contest-live-top">
+
+                    <div class="contest-live-badge">
+                        <span></span>
+                        EN VIVO
+                    </div>
+
+                    <span class="contest-live-update" id="contest-live-update"></span>
+
+                </div>
+
+                <div class="contest-live-main">
+
+                    <span class="contest-live-label">
+                        Ahora en competencia
+                    </span>
+
+                    <h3 id="contest-live-stage">
+                        Concurso en desarrollo
+                    </h3>
+
+                    <strong id="contest-live-detail"></strong>
+
+                </div>
+
+                <div class="contest-live-next">
+
+                    <span>
+                        A continuación
+                    </span>
+
+                    <strong id="contest-live-next"></strong>
 
                 </div>
 
@@ -835,7 +1398,7 @@
 
 
         <!-- GRUPOS -->
-        <section class="groups-section" id="grupos">
+        <section class="groups-section live-event-section" id="grupos">
 
             <div class="section-heading">
 
@@ -844,12 +1407,12 @@
                 </span>
 
                 <h2>
-                    Grupos de competencia
+                    Fase clasificatoria
                 </h2>
 
                 <p>
-                    La distribución será publicada luego del
-                    sorteo oficial.
+                    Sigue los grupos clasificatorios de Danzas Nacionales
+                    y Caporales.
                 </p>
 
             </div>
@@ -863,90 +1426,43 @@
         </section>
 
 
-        <!-- RESULTADOS -->
-        <section class="live-results-section" id="resultados">
+        <!-- CLASIFICADOS -->
+        <section class="classified-section live-event-section" id="clasificados" hidden>
 
             <div class="section-heading">
 
                 <span class="section-kicker">
-                    Resultados oficiales
+                    Gran Final
                 </span>
 
                 <h2>
-                    Resultados 2026
+                    Clasificados
+                </h2>
+
+            </div>
+
+            <div id="classified-2026"></div>
+
+        </section>
+
+
+        <!-- FINALES -->
+        <section class="live-results-section live-event-section" id="resultados">
+
+            <div class="section-heading">
+
+                <span class="section-kicker">
+                    Etapas finales
+                </span>
+
+                <h2>
+                    Finales 2026
                 </h2>
 
                 <p>
-                    Durante el concurso los resultados se
-                    actualizarán automáticamente.
+                    Sigue las competencias finales y sus
+                    puntajes oficiales en tiempo real.
                 </p>
-
-            </div>
-
-            <!-- ESTADO EN VIVO -->
-            <div class="contest-live-panel" id="contest-live-panel" hidden>
-
-                <div class="contest-live-top">
-
-                    <div class="contest-live-badge">
-                        <span></span>
-                        EN VIVO
-                    </div>
-
-                    <span class="contest-live-update" id="contest-live-update">
-                    </span>
-
-                </div>
-
-
-                <div class="contest-live-main">
-
-                    <span class="contest-live-label">
-                        Ahora en competencia
-                    </span>
-
-                    <h3 id="contest-live-stage">
-                        Clasificatoria de Danzas Nacionales
-                    </h3>
-
-                    <strong id="contest-live-detail">
-                        Grupo A
-                    </strong>
-
-                </div>
-
-
-                <div class="contest-live-next">
-
-                    <span>
-                        A continuación
-                    </span>
-
-                    <strong id="contest-live-next">
-                        Final Categoría Infantil
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- Este bloque se activa el día del evento -->
-
-            <div class="live-status" id="live-status" hidden>
-
-                <span class="live-dot"></span>
-
-                <div>
-                    <strong>EN VIVO</strong>
-
-                    <small>
-                        Resultados actualizados automáticamente
-                    </small>
-                </div>
-
-                <span class="live-update" id="live-update-time">
-                </span>
 
             </div>
 
@@ -984,28 +1500,9 @@
         </section>
 
 
-        <!-- CLASIFICADOS -->
-        <section class="classified-section" id="clasificados" hidden>
-
-            <div class="section-heading">
-
-                <span class="section-kicker">
-                    Gran Final
-                </span>
-
-                <h2>
-                    Clasificados
-                </h2>
-
-            </div>
-
-            <div id="classified-2026"></div>
-
-        </section>
-
 
         <!-- JURADO -->
-        <section class="jury-section" id="jurado">
+        <section class="jury-section live-event-section" id="jurado">
 
             <div class="section-heading">
 

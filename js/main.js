@@ -411,47 +411,1292 @@ const CCYT_API_URL =
   "https://script.google.com/macros/s/AKfycbwTqhcJttTFaip35tncMNJG_x18GmS3vbphfA4pVf0PAU3o78v8VUYn5JtvQ9DvGKqy/exec";
 
 
-async function loadContestLiveStatus() {
-  if (!contestLivePanel) {
+/* =========================================================
+   RESULTADOS EN VIVO 2026
+========================================================= */
+
+const groups2026 =
+  document.getElementById("groups-2026");
+
+const liveResultsContainer =
+  document.getElementById(
+    "live-results-container"
+  );
+
+const classifiedSection =
+  document.getElementById("clasificados");
+
+const classified2026 =
+  document.getElementById(
+    "classified-2026"
+  );
+
+const liveGlobalUpdate =
+  document.getElementById(
+    "live-global-update"
+  );
+
+const liveGlobalUpdateTime =
+  document.getElementById(
+    "live-global-update-time"
+  );
+
+const liveConnectionWarning =
+  document.getElementById(
+    "live-connection-warning"
+  );
+
+
+let lastLivePayload = null;
+let changedLiveRows = new Set();
+
+
+/* =========================================================
+   CONSULTA API
+========================================================= */
+
+async function loadCompetition2026() {
+  /*
+    Este código solo funciona en la página
+    que contiene los resultados 2026.
+  */
+  if (
+    !groups2026 &&
+    !liveResultsContainer &&
+    !contestLivePanel
+  ) {
     return;
   }
 
   try {
-    const url =
-      `${CCYT_API_URL}?sheet=Estado&_=${Date.now()}`;
-
-    const response = await fetch(url, {
-      cache: "no-store"
-    });
+    const response = await fetch(
+      `${CCYT_API_URL}?_=${Date.now()}`,
+      {
+        cache: "no-store"
+      }
+    );
 
     if (!response.ok) {
       throw new Error(
-        `Error al consultar el estado: ${response.status}`
+        `HTTP ${response.status}`
       );
     }
 
-    const result = await response.json();
+    const payload = await response.json();
 
-    if (!result.ok) {
+    if (!payload.ok) {
       throw new Error(
-        result.error || "No se pudo leer el estado"
+        payload.error ||
+        "No se pudieron cargar los resultados"
       );
     }
 
-    renderContestLiveStatus(result.data);
+    if (liveConnectionWarning) {
+      liveConnectionWarning.hidden = true;
+    }
+
+    const isFirstLoad =
+      lastLivePayload === null;
+
+    changedLiveRows =
+      detectChangedLiveRows(
+        lastLivePayload,
+        payload
+      );
+
+    const hasChanges =
+      changedLiveRows.size > 0;
+
+    lastLivePayload = payload;
+
+    renderCompetition2026(payload);
+
+    if (
+      isFirstLoad ||
+      hasChanges
+    ) {
+      updateGlobalLiveTime();
+    }
+
   } catch (error) {
     console.error(
-      "Error al cargar el estado del concurso:",
+      "Error cargando resultados 2026:",
       error
+    );
+
+    if (liveConnectionWarning) {
+      liveConnectionWarning.hidden = false;
+    }
+  }
+}
+
+function updateGlobalLiveTime() {
+  if (
+    !liveGlobalUpdate ||
+    !liveGlobalUpdateTime
+  ) {
+    return;
+  }
+
+  const now = new Date();
+
+  const formattedTime =
+    new Intl.DateTimeFormat(
+      "es-PE",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }
+    ).format(now);
+
+  liveGlobalUpdateTime.textContent =
+    formattedTime;
+
+  liveGlobalUpdate.hidden = false;
+}
+
+
+/* =========================================================
+   RENDER GENERAL
+========================================================= */
+
+function renderCompetition2026(payload) {
+  const config =
+    payload.configuracion || {};
+
+  const estado =
+    payload.estado || {};
+
+  renderContestLiveStatus(estado);
+
+  renderQualifyingCompetition(
+    payload,
+    config
+  );
+
+  renderOtherResults(
+    payload,
+    config
+  );
+
+  renderClassifiedCompetition(
+    payload
+  );
+}
+
+function renderQualifyingCompetition(
+  payload,
+  config
+) {
+  if (!groups2026) {
+    return;
+  }
+
+  const sections = [];
+
+
+  /* ==========================================
+     DANZAS NACIONALES
+  ========================================== */
+
+  if (
+    normalizeLiveValue(
+      config.mostrar_general
+    ) === "SI"
+  ) {
+    const generalRows =
+      (payload.general || []).filter(
+        row =>
+          normalizeLiveValue(row.fase) ===
+          "CLASIFICATORIA"
+      );
+
+    const generalGroups =
+      groupRowsBy(
+        generalRows,
+        "grupo"
+      );
+
+    if (
+      Object.keys(generalGroups).length
+    ) {
+      sections.push(`
+        <div class="qualifying-category-title">
+          <span>Danzas Nacionales</span>
+          <h3>Grupos clasificatorios</h3>
+        </div>
+      `);
+
+      Object.entries(generalGroups)
+        .sort(([a], [b]) =>
+          a.localeCompare(b)
+        )
+        .forEach(
+          ([groupName, rows]) => {
+            sections.push(
+              createScoreTable({
+                title:
+                  `Grupo ${groupName}`,
+                rows,
+                showDance: true,
+                showClassification: true,
+                category: "general"
+              })
+            );
+          }
+        );
+    }
+  }
+
+
+  /* ==========================================
+     CAPORALES
+  ========================================== */
+
+  if (
+    normalizeLiveValue(
+      config.mostrar_caporales
+    ) === "SI"
+  ) {
+    const caporalesRows =
+      (payload.caporales || []).filter(
+        row =>
+          normalizeLiveValue(row.fase) ===
+          "CLASIFICATORIA"
+      );
+
+    const caporalesGroups =
+      groupRowsBy(
+        caporalesRows,
+        "grupo"
+      );
+
+    if (
+      Object.keys(caporalesGroups).length
+    ) {
+      sections.push(`
+        <div class="
+          qualifying-category-title
+          qualifying-category-caporales
+        ">
+          <span>Caporales</span>
+          <h3>Grupos clasificatorios</h3>
+        </div>
+      `);
+
+      Object.entries(caporalesGroups)
+        .sort(([a], [b]) =>
+          a.localeCompare(b)
+        )
+        .forEach(
+          ([groupName, rows]) => {
+            sections.push(
+              createScoreTable({
+                title:
+                  `Grupo ${groupName}`,
+                rows,
+                showDance: false,
+                showClassification: true,
+                category: "caporales"
+              })
+            );
+          }
+        );
+    }
+  }
+
+
+  /* ==========================================
+     SIN GRUPOS
+  ========================================== */
+
+  if (!sections.length) {
+    groups2026.innerHTML = `
+      <div class="results-waiting small">
+
+        <div class="results-waiting-icon">
+          🎭
+        </div>
+
+        <h3>
+          Grupos próximamente
+        </h3>
+
+        <p>
+          La distribución será publicada
+          después del sorteo oficial.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  groups2026.innerHTML =
+    sections.join("");
+}
+
+function createScoreTable(options) {
+  const {
+    title,
+    rows,
+    showDance,
+    showClassification,
+    category = ""
+  } = options;
+
+  const sortedRows = [...rows].sort(
+    (a, b) =>
+      Number(a.orden || 999) -
+      Number(b.orden || 999)
+  );
+
+  const jurors =
+    getVisibleJurors(sortedRows);
+
+  const jurorHeaders =
+    jurors
+      .map(
+        juror =>
+          `<th>${juror.toUpperCase()}</th>`
+      )
+      .join("");
+
+  const body =
+    sortedRows
+      .map(row => {
+        return createScoreRow(
+          row,
+          jurors,
+          showDance,
+          showClassification,
+          category
+        );
+      })
+      .join("");
+
+  return `
+    <div class="group-block live-group-block">
+
+      <div class="live-table-heading">
+        <h3>${escapeLiveHtml(title)}</h3>
+
+        <span>
+          Actualización automática
+        </span>
+      </div>
+
+      <div class="scores-table-wrapper">
+
+        <table class="scores-table live-scores-table">
+
+          <thead>
+            <tr>
+              <th>Orden</th>
+              <th>Agrupación</th>
+
+              ${showDance
+      ? "<th>Danza</th>"
+      : ""
+    }
+
+              ${jurorHeaders}
+
+              <th>Total</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${body}
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+  `;
+}
+
+function createScoreRow(
+  row,
+  jurors,
+  showDance,
+  showClassification,
+  category
+) {
+  const published =
+    normalizeLiveValue(row.publicar) ===
+    "SI";
+
+  const disqualified =
+    published &&
+    normalizeLiveValue(
+      row.descalificado
+    ) === "SI";
+
+  const classified =
+    published &&
+    showClassification &&
+    normalizeLiveValue(
+      row.clasificado
+    ) === "SI";
+
+  let rowClass = "";
+
+  if (disqualified) {
+    rowClass = "live-disqualified-row";
+  } else if (classified) {
+    rowClass = "classified-row";
+  }
+
+  const jurorCells =
+    jurors
+      .map(juror => {
+        if (!published) {
+          return `<td class="score-pending">—</td>`;
+        }
+
+        return `
+          <td>
+            ${escapeLiveHtml(
+          row[juror] || "—"
+        )}
+          </td>
+        `;
+      })
+      .join("");
+
+  let resultCell;
+
+  if (!published) {
+    const state =
+      normalizeLiveValue(row.estado);
+
+    resultCell = `
+      <td>
+        <span class="live-result-state ${state === "EN_EVALUACION"
+        ? "is-evaluating"
+        : ""
+      }">
+          ${state === "EN_EVALUACION"
+        ? "En evaluación"
+        : "Pendiente"
+      }
+        </span>
+      </td>
+    `;
+  } else if (disqualified) {
+    resultCell = `
+      <td>
+        <span class="live-disqualified">
+          Descalificado
+        </span>
+
+        ${row.motivo
+        ? `
+              <small class="live-result-note">
+                ${escapeLiveHtml(
+          row.motivo
+        )}
+              </small>
+            `
+        : ""
+      }
+      </td>
+    `;
+  } else {
+    resultCell = `
+      <td>
+        <strong class="live-total">
+          ${escapeLiveHtml(
+      row.total || "—"
+    )}
+        </strong>
+
+        ${Number(row.penalizacion) > 0
+        ? `
+              <small class="live-penalty">
+                -${escapeLiveHtml(
+          row.penalizacion
+        )} pts
+              </small>
+            `
+        : ""
+      }
+
+        ${classified
+        ? `
+              <small class="live-classified">
+                Clasificado
+              </small>
+            `
+        : ""
+      }
+      </td>
+    `;
+  }
+
+  const rowKey =
+    getLiveRowKey(
+      category,
+      row
+    );
+
+  if (
+    changedLiveRows.has(rowKey)
+  ) {
+    rowClass +=
+      " live-row-updated";
+  }
+
+  return `
+    <tr class="${rowClass}">
+      <td>
+        ${escapeLiveHtml(
+    row.orden || "—"
+  )}
+      </td>
+
+      <td>
+        <strong>
+          ${escapeLiveHtml(
+    row.agrupacion || ""
+  )}
+        </strong>
+      </td>
+
+      ${showDance
+      ? `
+            <td>
+              ${escapeLiveHtml(
+        row.danza || ""
+      )}
+            </td>
+          `
+      : ""
+    }
+
+      ${jurorCells}
+
+      ${resultCell}
+    </tr>
+  `;
+}
+
+function getVisibleJurors(rows) {
+  const jurors = [
+    "j1",
+    "j2",
+    "j3",
+    "j4",
+    "j5"
+  ];
+
+  return jurors.filter(juror =>
+    rows.some(row => {
+      return (
+        normalizeLiveValue(
+          row.publicar
+        ) === "SI" &&
+        String(row[juror] || "").trim() !== ""
+      );
+    })
+  );
+}
+
+function renderClassifiedCompetition(
+  payload
+) {
+  if (
+    !classifiedSection ||
+    !classified2026
+  ) {
+    return;
+  }
+
+  const general =
+    (payload.general || [])
+      .filter(row =>
+        normalizeLiveValue(row.fase) ===
+          "CLASIFICATORIA" &&
+        normalizeLiveValue(row.publicar) ===
+          "SI" &&
+        normalizeLiveValue(row.clasificado) ===
+          "SI" &&
+        normalizeLiveValue(row.descalificado) !==
+          "SI"
+      );
+
+  const caporales =
+    (payload.caporales || [])
+      .filter(row =>
+        normalizeLiveValue(row.fase) ===
+          "CLASIFICATORIA" &&
+        normalizeLiveValue(row.publicar) ===
+          "SI" &&
+        normalizeLiveValue(row.clasificado) ===
+          "SI" &&
+        normalizeLiveValue(row.descalificado) !==
+          "SI"
+      );
+
+
+  if (
+    !general.length &&
+    !caporales.length
+  ) {
+    classifiedSection.hidden = true;
+    classified2026.innerHTML = "";
+    return;
+  }
+
+
+  classifiedSection.hidden = false;
+
+  let html = "";
+
+
+  /* DANZAS NACIONALES */
+
+  if (general.length) {
+    html += `
+      <div class="classified-category">
+
+        <div class="classified-category-heading">
+          <span>Danzas Nacionales</span>
+
+          <h3>
+            Clasificados a la Gran Final
+          </h3>
+        </div>
+
+        <div class="classified-live-grid">
+
+          ${general
+            .sort((a, b) =>
+              String(a.grupo)
+                .localeCompare(
+                  String(b.grupo)
+                )
+            )
+            .map(row => `
+              <article
+                class="classified-live-card"
+              >
+
+                <span>
+                  Grupo ${escapeLiveHtml(
+                    row.grupo
+                  )}
+                </span>
+
+                <h3>
+                  ${escapeLiveHtml(
+                    row.agrupacion
+                  )}
+                </h3>
+
+                <p>
+                  ${escapeLiveHtml(
+                    row.danza || ""
+                  )}
+                </p>
+
+                <strong>
+                  ${escapeLiveHtml(
+                    row.total
+                  )} pts
+                </strong>
+
+              </article>
+            `)
+            .join("")}
+
+        </div>
+
+      </div>
+    `;
+  }
+
+
+  /* CAPORALES */
+
+  if (caporales.length) {
+    html += `
+      <div
+        class="classified-category
+               classified-category-caporales"
+      >
+
+        <div class="classified-category-heading">
+          <span>Caporales</span>
+
+          <h3>
+            Clasificados a la Gran Final
+          </h3>
+        </div>
+
+        <div class="classified-live-grid">
+
+          ${caporales
+            .sort((a, b) =>
+              String(a.grupo)
+                .localeCompare(
+                  String(b.grupo)
+                )
+            )
+            .map(row => `
+              <article
+                class="classified-live-card
+                       classified-caporales-card"
+              >
+
+                <span>
+                  Grupo ${escapeLiveHtml(
+                    row.grupo
+                  )}
+                </span>
+
+                <h3>
+                  ${escapeLiveHtml(
+                    row.agrupacion
+                  )}
+                </h3>
+
+                <strong>
+                  ${escapeLiveHtml(
+                    row.total
+                  )} pts
+                </strong>
+
+              </article>
+            `)
+            .join("")}
+
+        </div>
+
+      </div>
+    `;
+  }
+
+
+  classified2026.innerHTML = html;
+}
+
+function renderOtherResults(
+  payload,
+  config
+) {
+  if (!liveResultsContainer) {
+    return;
+  }
+
+  const sections = [];
+
+  /*
+    FINAL GENERAL
+  */
+  if (
+    normalizeLiveValue(
+      config.mostrar_final_general
+    ) === "SI"
+  ) {
+    const finalGeneral =
+      (payload.general || []).filter(
+        row =>
+          normalizeLiveValue(row.fase) ===
+          "FINAL"
+      );
+
+    if (finalGeneral.length) {
+      sections.push(
+        createScoreTable({
+          title:
+            "Gran Final - Danzas Nacionales",
+          rows: finalGeneral,
+          showDance: true,
+          showClassification: false,
+          category: "general"
+        })
+      );
+    }
+  }
+
+
+  /*
+    INFANTIL
+  */
+  if (
+    normalizeLiveValue(
+      config.mostrar_infantil
+    ) === "SI"
+  ) {
+    const infantil =
+      payload.infantil || [];
+
+    if (infantil.length) {
+      sections.push(
+        createScoreTable({
+          title:
+            "Categoría Infantil",
+          rows: infantil,
+          showDance: true,
+          showClassification: false,
+          category: "infantil"
+        })
+      );
+    }
+  }
+
+
+  /*
+    FINAL CAPORALES
+  */
+  if (
+    normalizeLiveValue(
+      config.mostrar_final_caporales
+    ) === "SI"
+  ) {
+    const finalCaporales =
+      (payload.caporales || []).filter(
+        row =>
+          normalizeLiveValue(row.fase) ===
+          "FINAL"
+      );
+
+    if (finalCaporales.length) {
+      sections.push(
+        createScoreTable({
+          title:
+            "Gran Final - Caporales",
+          rows: finalCaporales,
+          showDance: false,
+          showClassification: false,
+          category: "caporales"
+        })
+      );
+    }
+  }
+
+
+  /*
+    CAMPEÓN DE CAMPEONES
+  */
+  if (
+    normalizeLiveValue(
+      config.mostrar_campeones
+    ) === "SI"
+  ) {
+    const campeones =
+      payload.campeones || [];
+
+    if (campeones.length) {
+      sections.push(
+        createScoreTable({
+          title:
+            "Campeón de Campeones",
+          rows: campeones,
+          showDance: true,
+          showClassification: false,
+          category: "campeones"
+        })
+      );
+    }
+  }
+
+
+  if (!sections.length) {
+    renderResultsWaiting();
+    return;
+  }
+
+  liveResultsContainer.innerHTML =
+    sections.join("");
+}
+
+function renderResultsWaiting() {
+  liveResultsContainer.innerHTML = `
+    <div class="results-waiting">
+
+      <div class="results-waiting-icon">
+        🏆
+      </div>
+
+      <span class="results-waiting-status">
+        Aún no disponible
+      </span>
+
+      <h3>
+        Resultados próximamente
+      </h3>
+
+      <p>
+        Los puntajes se publicarán aquí
+        durante el desarrollo del concurso.
+      </p>
+
+      <div class="results-waiting-live">
+        <i></i>
+        Actualización en vivo durante el concurso
+      </div>
+
+    </div>
+  `;
+}
+
+function groupRowsBy(rows, property) {
+  return rows.reduce(
+    (groups, row) => {
+      const key =
+        String(row[property] || "")
+          .trim();
+
+      if (!key) {
+        return groups;
+      }
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(row);
+
+      return groups;
+    },
+    {}
+  );
+}
+
+
+function normalizeLiveValue(value) {
+  return String(value || "")
+    .trim()
+    .toUpperCase();
+}
+
+
+function escapeLiveHtml(value) {
+  const element =
+    document.createElement("div");
+
+  element.textContent =
+    String(value ?? "");
+
+  return element.innerHTML;
+}
+
+function detectChangedLiveRows(
+  previousPayload,
+  currentPayload
+) {
+  const changed = new Set();
+
+  if (!previousPayload) {
+    return changed;
+  }
+
+  const categories = [
+    "general",
+    "infantil",
+    "caporales",
+    "campeones"
+  ];
+
+  categories.forEach(category => {
+    const previousRows =
+      previousPayload[category] || [];
+
+    const currentRows =
+      currentPayload[category] || [];
+
+    currentRows.forEach(currentRow => {
+      const key =
+        getLiveRowKey(
+          category,
+          currentRow
+        );
+
+      const previousRow =
+        previousRows.find(row =>
+          getLiveRowKey(
+            category,
+            row
+          ) === key
+        );
+
+      if (!previousRow) {
+        return;
+      }
+
+      const fieldsToCompare = [
+        "j1",
+        "j2",
+        "j3",
+        "j4",
+        "j5",
+        "subtotal",
+        "penalizacion",
+        "total",
+        "estado",
+        "clasificado",
+        "descalificado",
+        "publicar"
+      ];
+
+      const hasChanged =
+        fieldsToCompare.some(field =>
+          String(previousRow[field] || "") !==
+          String(currentRow[field] || "")
+        );
+
+      if (hasChanged) {
+        changed.add(key);
+      }
+    });
+  });
+
+  return changed;
+}
+
+function getLiveRowKey(
+  category,
+  row
+) {
+  return [
+    category,
+    row.fase || "",
+    row.grupo || "",
+    row.orden || "",
+    row.agrupacion || ""
+  ].join("|");
+}
+
+/* =========================================================
+   ACTIVAR CONSULTAS EN VIVO SOLO EL DÍA DEL CONCURSO
+========================================================= */
+
+let liveCompetitionInterval = null;
+
+const LIVE_RESULTS_START =
+  new Date("2026-10-25T11:00:00-05:00");
+
+
+function startLiveCompetitionUpdates() {
+  if (
+    !groups2026 &&
+    !liveResultsContainer &&
+    !contestLivePanel
+  ) {
+    return;
+  }
+
+  /*
+    Evita crear más de un intervalo.
+  */
+  if (liveCompetitionInterval) {
+    return;
+  }
+
+  /*
+    Primera carga inmediata.
+  */
+  loadCompetition2026();
+
+  /*
+    Luego actualizamos cada 5 segundos.
+  */
+  liveCompetitionInterval = setInterval(
+    loadCompetition2026,
+    5000
+  );
+}
+
+
+function stopLiveCompetitionUpdates() {
+  if (!liveCompetitionInterval) {
+    return;
+  }
+
+  clearInterval(
+    liveCompetitionInterval
+  );
+
+  liveCompetitionInterval = null;
+}
+
+
+function checkLiveCompetitionTime() {
+  const now = new Date();
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const testLiveMode =
+    params.get("preview") === "concurso2026";
+
+  if (
+    now >= LIVE_RESULTS_START ||
+    testLiveMode
+  ) {
+    startLiveCompetitionUpdates();
+  } else {
+    stopLiveCompetitionUpdates();
+  }
+}
+
+
+/*
+  Revisamos al cargar la página.
+*/
+checkLiveCompetitionTime();
+
+
+/*
+  Y luego cada 30 segundos por si
+  el usuario tiene la página abierta
+  justo cuando llegan las 11:00 a. m.
+*/
+setInterval(
+  checkLiveCompetitionTime,
+  30000
+);
+
+/* =========================================================
+   MODO CONCURSO - 2026
+========================================================= */
+
+const LIVE_MODE_START =
+  new Date("2026-10-25T11:00:00-05:00");
+
+
+function updateCompetitionPageMode() {
+  const now = new Date();
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const testLiveMode =
+    params.get("preview") === "concurso2026";
+
+  const isLiveMode =
+    now >= LIVE_MODE_START ||
+    testLiveMode;
+
+  /*
+    SECCIONES PREVIAS
+  */
+  document
+    .querySelectorAll(".pre-event-section")
+    .forEach((section) => {
+      section.hidden = isLiveMode;
+    });
+
+
+  /*
+    AVISO DE RESULTADOS
+  */
+  const evaluationPreview =
+    document.getElementById(
+      "evaluation-preview"
+    );
+
+  if (evaluationPreview) {
+    evaluationPreview.hidden =
+      isLiveMode;
+  }
+
+
+  /*
+    SECCIONES DEL DÍA DEL CONCURSO
+  */
+  document
+    .querySelectorAll(".live-event-section")
+    .forEach((section) => {
+      /*
+        Clasificados tiene su propia lógica,
+        por eso no lo mostramos a la fuerza.
+      */
+      if (
+        section.id === "clasificados"
+      ) {
+        if (!isLiveMode) {
+          section.hidden = true;
+        }
+
+        return;
+      }
+
+      section.hidden =
+        !isLiveMode;
+    });
+}
+
+
+updateCompetitionPageMode();
+
+setInterval(
+  updateCompetitionPageMode,
+  30000
+);
+
+
+const editionButton =
+  document.getElementById(
+    "countdown-edition-button"
+  );
+
+if (editionButton) {
+
+  const now = new Date();
+
+  const contestDate =
+    new Date(2026, 9, 25);
+
+  const nextDay =
+    new Date(2026, 9, 26);
+
+  if (
+    now >= contestDate &&
+    now < nextDay
+  ) {
+    editionButton.innerHTML = `
+      Ver puntajes en vivo
+      <span class="countdown-live-dot"></span>
+    `;
+
+    editionButton.classList.add(
+      "is-live"
     );
   }
 }
 
-if (contestLivePanel) {
-  loadContestLiveStatus();
+const dropdownToggles =
+  document.querySelectorAll(".dropdown-toggle");
 
-  setInterval(
-    loadContestLiveStatus,
-    5000
-  );
-}
+dropdownToggles.forEach(toggle => {
+  toggle.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const dropdown =
+      toggle.closest(".dropdown");
+
+    if (!dropdown) return;
+
+    const isOpen =
+      dropdown.classList.toggle("is-open");
+
+    toggle.setAttribute(
+      "aria-expanded",
+      isOpen ? "true" : "false"
+    );
+  });
+});
