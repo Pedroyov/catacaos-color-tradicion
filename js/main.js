@@ -1700,3 +1700,107 @@ dropdownToggles.forEach(toggle => {
     );
   });
 });
+
+const editionShareButton =
+    document.getElementById(
+        "edition-share-button"
+    );
+
+if (editionShareButton) {
+
+    editionShareButton.addEventListener(
+        "click",
+        async () => {
+
+            const shareData = {
+                title:
+                    "Catacaos, Color y Tradición 2026",
+
+                text:
+                    "Conoce toda la información de Catacaos, Color y Tradición 2026.",
+
+                url:
+                    "https://pedroyov.github.io/catacaos-color-tradicion/ediciones/2026-previas.html"
+            };
+
+            /*
+             * Celulares y navegadores compatibles
+             */
+            if (navigator.share) {
+
+                try {
+                    await navigator.share(
+                        shareData
+                    );
+                } catch (error) {
+
+                    /*
+                     * Si el usuario simplemente
+                     * cerró el menú, no hacemos nada.
+                     */
+                    if (
+                        error.name !==
+                        "AbortError"
+                    ) {
+                        console.error(
+                            "Error al compartir:",
+                            error
+                        );
+                    }
+                }
+
+                return;
+            }
+
+            /*
+             * PC o navegador sin Web Share API
+             */
+            try {
+
+                await navigator.clipboard.writeText(
+                    shareData.url
+                );
+
+                showShareCopied();
+
+            } catch (error) {
+
+                console.error(
+                    "No se pudo copiar el enlace:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
+
+function showShareCopied() {
+
+    if (!editionShareButton) {
+        return;
+    }
+
+    const originalContent =
+        editionShareButton.innerHTML;
+
+    editionShareButton.innerHTML =
+        "<span>✓</span> Enlace copiado";
+
+    editionShareButton.classList.add(
+        "is-copied"
+    );
+
+    setTimeout(() => {
+
+        editionShareButton.innerHTML =
+            originalContent;
+
+        editionShareButton.classList.remove(
+            "is-copied"
+        );
+
+    }, 2000);
+}

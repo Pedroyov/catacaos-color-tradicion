@@ -2299,3 +2299,42 @@
   }
 
 }
+
+.edition-share-button {
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 11px 20px;
+
+    color: #ffffff;
+    background: #0b6d7c;
+
+    border: 0;
+    border-radius: 999px;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+.edition-share-button:hover {
+    transform: translateY(-2px);
+    background: #2dddf8;
+}
+
+.edition-share-button span {
+    font-size: 1rem;
+}
+
+.edition-share-button.is-copied {
+    background: #198754;
+}
