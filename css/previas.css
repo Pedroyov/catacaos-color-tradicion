@@ -2338,3 +2338,16 @@
 .edition-share-button.is-copied {
     background: #198754;
 }
+
+.edition-news-button.is-active {
+  color: #ffffff;
+  background: #9f2629;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.edition-news-button.is-active:hover {
+  background: #7f1e22;
+  transform: translateY(-2px);
+}
