@@ -2345,9 +2345,18 @@
 
   cursor: pointer;
   text-decoration: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 18px;
+
+  text-decoration: none;
 }
 
 .edition-news-button.is-active:hover {
   background: #7f1e22;
   transform: translateY(-2px);
 }
+
