@@ -23,8 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * 2017-2.jpg
    * ...
    * 2017-37.jpg
+   *
+   * Este objeto es el respaldo (fallback) que se usa si la API
+   * (hoja "Galeria") no responde. Si la API responde bien, se
+   * reemplaza por los datos reales antes de generar la galería.
    */
-  const galleryYears = {
+  const GALLERY_YEARS_FALLBACK = {
     2017: 36,
     2018: 150,
     2019: 4,
@@ -32,6 +36,30 @@ document.addEventListener("DOMContentLoaded", () => {
     2023: 165,
     2024: 162
   };
+
+  let galleryYears = GALLERY_YEARS_FALLBACK;
+
+  /**
+   * Intenta obtener la cantidad de fotos por edición desde la API
+   * (hoja Galeria). Si falla por cualquier motivo, se conserva el
+   * respaldo estático y la galería sigue funcionando igual que antes.
+   */
+  async function computeGalleryYearsFromApi() {
+    const registros = await CCTData.getGaleria();
+    const result = {};
+
+    registros.forEach((registro) => {
+      if (!registro.anio || !registro.cantidadFotos) return;
+      if (String(registro.visible).toUpperCase() === "NO") return;
+      result[registro.anio] = Number(registro.cantidadFotos);
+    });
+
+    if (Object.keys(result).length === 0) {
+      throw new Error("La hoja Galeria no devolvió ediciones visibles.");
+    }
+
+    return result;
+  }
 
   /**
    * Crea una fotografía dentro de la galería.
@@ -141,10 +169,26 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /*
-   * Se generan las imágenes antes de configurar
-   * los filtros y el lightbox.
+   * Se intenta actualizar galleryYears con datos de la API antes de
+   * generar las imágenes. Si la API falla, se usa el respaldo estático
+   * (GALLERY_YEARS_FALLBACK) y la página sigue funcionando igual.
    */
-  generateGallery();
+  async function initGallery() {
+    try {
+      galleryYears = await computeGalleryYearsFromApi();
+    } catch (error) {
+      console.warn(
+        "No se pudo cargar la galería desde la API, se usa el respaldo estático:",
+        error
+      );
+      galleryYears = GALLERY_YEARS_FALLBACK;
+    }
+
+    generateGallery();
+    updateEmptyMessage();
+  }
+
+  initGallery();
 
   /*
    * Filtros por año.
@@ -205,5 +249,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  updateEmptyMessage();
 });
