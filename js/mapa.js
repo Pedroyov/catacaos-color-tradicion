@@ -13,7 +13,14 @@
 |
 */
 
-const regiones = {
+/*
+ * Datos de respaldo (Bloque 3): si la API de datos (Bloque 2) no responde
+ * por cualquier motivo, la página sigue funcionando con esta copia fija
+ * en vez de romperse. En condiciones normales, `regiones` se reemplaza
+ * por datos frescos calculados desde Participaciones + Regiones
+ * (ver computeRegionesFromApi más abajo).
+ */
+const REGIONES_FALLBACK = {
   "PE-PIU": {
     nombre: "Piura",
 
@@ -534,6 +541,9 @@ const regiones = {
     ]
   }
 };
+
+// Se reemplaza por datos reales apenas responde la API (ver DOMContentLoaded).
+let regiones = REGIONES_FALLBACK;
 
 /*
 |--------------------------------------------------------------------------
@@ -1395,13 +1405,129 @@ function getHeatLevel(participations) {
 
 /*
 |--------------------------------------------------------------------------
+| Datos en vivo (Bloque 3): Regiones + Participaciones vía CCTData
+|--------------------------------------------------------------------------
+|
+| Reconstruye el mismo objeto "regiones" (por región: nombre, descripcion,
+| provincias[], agrupaciones[]) pero calculado a partir de la hoja
+| Participaciones en lugar de estar escrito a mano. Así, participaciones,
+| títulos y años por agrupación nunca se vuelven a desactualizar.
+|
+| "participaciones" de una agrupación = cantidad de ediciones (años)
+| distintas en las que participó (si compitió en dos categorías el mismo
+| año, sigue contando como 1 participación, igual que en los datos
+| históricos curados a mano).
+*/
+
+async function computeRegionesFromApi() {
+  const [regionesApi, participaciones] = await Promise.all([
+    CCTData.getRegiones(),
+    CCTData.getParticipaciones()
+  ]);
+
+  const metaByCode = {};
+  const codeByName = {};
+
+  regionesApi.forEach((r) => {
+    metaByCode[r.idMapa] = r;
+    codeByName[r.region] = r.idMapa;
+  });
+
+  const result = {};
+
+  participaciones.forEach((p) => {
+    if (!p.region || !p.agrupacion) return;
+
+    const code = codeByName[p.region];
+    if (!code) {
+      console.warn(
+        `Participación con región desconocida "${p.region}" (agrupación: ${p.agrupacion}); se omite.`
+      );
+      return;
+    }
+
+    if (!result[code]) {
+      const meta = metaByCode[code] || {};
+      result[code] = {
+        nombre: meta.region || p.region,
+        descripcion: meta.descripcion || "",
+        provinciasSet: new Set(),
+        agrupacionesMap: new Map()
+      };
+    }
+
+    const region = result[code];
+    if (p.provincia) region.provinciasSet.add(p.provincia);
+
+    if (!region.agrupacionesMap.has(p.agrupacion)) {
+      const localidad =
+        p.distritoLocalidad &&
+        p.distritoLocalidad.trim().toLowerCase() !==
+          String(p.provincia || "").trim().toLowerCase()
+          ? p.distritoLocalidad
+          : undefined;
+
+      region.agrupacionesMap.set(p.agrupacion, {
+        nombre: p.agrupacion,
+        provincia: p.provincia || "",
+        localidad,
+        titulos: 0,
+        aniosSet: new Set()
+      });
+    }
+
+    const group = region.agrupacionesMap.get(p.agrupacion);
+    if (String(p.campeon).toUpperCase() === "SI") group.titulos += 1;
+    if (p.anio) group.aniosSet.add(String(p.anio));
+  });
+
+  const finalRegiones = {};
+  Object.entries(result).forEach(([code, region]) => {
+    finalRegiones[code] = {
+      nombre: region.nombre,
+      descripcion: region.descripcion,
+      provincias: Array.from(region.provinciasSet),
+      agrupaciones: Array.from(region.agrupacionesMap.values())
+        .map((g) => ({
+          nombre: g.nombre,
+          provincia: g.provincia,
+          localidad: g.localidad,
+          participaciones: g.aniosSet.size,
+          titulos: g.titulos,
+          anios: Array.from(g.aniosSet).sort()
+        }))
+    };
+  });
+
+  return finalRegiones;
+}
+
+/*
+|--------------------------------------------------------------------------
 | Inicialización
 |--------------------------------------------------------------------------
 */
 
 document.addEventListener(
   "DOMContentLoaded",
-  () => {
+  async () => {
+    try {
+      const datosReales = await computeRegionesFromApi();
+
+      if (datosReales && Object.keys(datosReales).length > 0) {
+        regiones = datosReales;
+      } else {
+        console.warn(
+          "La API respondió sin datos utilizables; se usan los datos de respaldo del mapa."
+        );
+      }
+    } catch (error) {
+      console.error(
+        "No se pudieron cargar los datos en vivo del mapa, se usan los datos de respaldo:",
+        error
+      );
+    }
+
     renderGeneralTotals();
     renderTable();
     renderProvinceRanking();
