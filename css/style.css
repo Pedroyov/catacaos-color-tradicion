@@ -7588,6 +7588,79 @@ body{ font-size:16px; }
   display:none;
 }
 
+/* =========================
+   CAMPEÓN VIGENTE (Danzas/Caporales/Infantil en fila)
+========================= */
+
+.vigente-section{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:70px 20px 30px;
+}
+
+.vigente-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:30px;
+}
+
+.vigente-card{
+  background:var(--color-white);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-md);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.vigente-card .champion-image{
+  position:relative;
+}
+
+.vigente-card .champion-image::after{
+  width:52px;
+  height:52px;
+  font-size:26px;
+  right:-10px;
+  top:-10px;
+}
+
+.vigente-card .champion-image img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  border-radius:0;
+  box-shadow:none;
+  display:block;
+}
+
+.vigente-card .champion-info{
+  padding:26px;
+}
+
+.vigente-card .champion-info h3{
+  font-size:26px;
+  margin:6px 0 12px;
+  color:var(--color-primary);
+}
+
+.vigente-card .champion-info p{
+  font-size:15px;
+  color:var(--color-muted);
+  line-height:1.6;
+  margin-bottom:18px;
+}
+
+.vigente-card[hidden]{
+  display:none;
+}
+
+@media(max-width:700px){
+  .vigente-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 .gallery-empty{
   text-align:center;
   color:#666;

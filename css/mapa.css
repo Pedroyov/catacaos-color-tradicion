@@ -1,0 +1,275 @@
+/* Mejoras específicas de la página de estadísticas.
+   Se carga después de style.css para no afectar otras páginas. */
+
+.competition-summary {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 8% 15%, rgba(255, 208, 0, .15), transparent 24rem),
+    linear-gradient(180deg, #fff 0%, #fff9ef 100%);
+}
+
+.competition-summary[hidden] {
+  display: none;
+}
+
+.competition-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 38px;
+}
+
+.competition-stat-card {
+  --competition-color: #b3262d;
+  --competition-soft: #fff0f1;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: 27px;
+  border: 1px solid color-mix(in srgb, var(--competition-color) 18%, white);
+  border-top: 6px solid var(--competition-color);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(23, 36, 44, .09);
+}
+
+.competition-stat-card--infantil {
+  --competition-color: #d97a21;
+  --competition-soft: #fff6e8;
+}
+
+.competition-stat-card--caporales {
+  --competition-color: #0b6d7c;
+  --competition-soft: #e9f7f8;
+}
+
+.competition-stat-card::after {
+  content: "";
+  position: absolute;
+  right: -35px;
+  bottom: -50px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--competition-soft);
+}
+
+.competition-card-kicker,
+.competition-card-period {
+  position: relative;
+  z-index: 1;
+  display: block;
+  color: var(--competition-color);
+  font-family: "Montserrat", sans-serif;
+  font-size: .73rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.competition-stat-card h3 {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 20px;
+  color: #17242c;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+}
+
+.competition-card-values {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.competition-card-values strong,
+.competition-card-values span {
+  display: block;
+}
+
+.competition-card-values strong {
+  color: var(--competition-color);
+  font: 800 2rem/1 "Montserrat", sans-serif;
+}
+
+.competition-card-values span {
+  margin-top: 5px;
+  color: #68717b;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.competition-card-period {
+  padding-top: 15px;
+  border-top: 1px solid rgba(23, 36, 44, .1);
+  color: #68717b;
+  font-size: .68rem;
+}
+
+.district-navigation {
+  width: 100%;
+  margin-top: 13px;
+}
+
+.district-navigation-label {
+  display: block;
+  width: 100%;
+  margin-bottom: 9px;
+  color: #52616a;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.district-button {
+  border: 2px solid #d97a21;
+  color: #764012;
+  background: #fff6e8;
+  cursor: pointer;
+  transition: transform .2s ease, color .2s ease, background .2s ease;
+}
+
+.district-button:hover,
+.district-button:focus-visible,
+.district-button.is-active {
+  color: #fff;
+  background: #d97a21;
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.group-competitions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.group-competition-badge {
+  --badge-color: #b3262d;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid color-mix(in srgb, var(--badge-color) 25%, white);
+  border-radius: 999px;
+  color: var(--badge-color);
+  background: color-mix(in srgb, var(--badge-color) 8%, white);
+  font-size: .66rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.group-competition-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--badge-color);
+}
+
+.group-competition-badge--infantil { --badge-color: #d97a21; }
+.group-competition-badge--caporales { --badge-color: #0b6d7c; }
+
+.region-group-card--infantil {
+  border-left-color: #d97a21;
+}
+
+.region-group-card--caporales {
+  border-left-color: #0b6d7c;
+}
+
+.region-group-card--mixta {
+  border-left-color: #ffd000;
+}
+
+.district-empty {
+  padding: 22px;
+  border: 1px dashed rgba(11, 109, 124, .3);
+  border-radius: 14px;
+  color: #59646d;
+  background: #f5fbfc;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .competition-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .competition-stat-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .peru-map-card {
+    padding-inline: 14px;
+  }
+
+  #peru-map.piura-mode {
+    width: calc(100% + 20px);
+    min-height: 350px;
+    margin-inline: -10px;
+  }
+
+  #peru-map.piura-mode svg {
+    width: 100%;
+    max-width: none;
+    transform: none;
+  }
+
+  #peru-map.piura-mode .province-map-label {
+    font-size: 18px !important;
+    font-weight: 800;
+    paint-order: stroke;
+    stroke: rgba(255, 255, 255, .94);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+
+  #peru-map.piura-mode .piura-province-path {
+    stroke-width: 2.4;
+  }
+}
+
+@media (max-width: 620px) {
+  .competition-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .competition-stat-card:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+
+  .competition-stat-card {
+    padding: 23px;
+  }
+
+  .region-panel {
+    padding-inline: 17px;
+  }
+
+  .region-tags {
+    gap: 8px;
+  }
+
+  .region-tag {
+    padding: 10px 13px;
+  }
+}
+
+@media (max-width: 420px) {
+  #peru-map.piura-mode {
+    width: calc(100% + 28px);
+    margin-inline: -14px;
+  }
+
+  #peru-map.piura-mode .province-map-label {
+    font-size: 20px !important;
+  }
+}

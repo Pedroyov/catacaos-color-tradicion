@@ -55,6 +55,7 @@ function getDataForAction(action) {
     case 'agrupaciones':    result = getAgrupaciones(); break;
     case 'catalogos':       result = getCatalogos(); break;
     case 'galeria':         result = getGaleria(); break;
+    case 'debug_headers':   result = getDebugHeaders(); break;
     case 'all':
       result = {
         config: getConfig(),
@@ -153,6 +154,7 @@ function getParticipaciones() {
     'danzapresentacion': 'danzaPresentacion',
     'puesto': 'puesto',
     'campeon': 'campeon',
+    'smscampeon': 'mensajeCampeon',
     'observacion': 'observacion',
     'fuentereferencia': 'fuente'
   });
@@ -201,11 +203,34 @@ function getAgrupaciones() {
   // Las cabeceras de esta hoja ya son snake_case (id_agrupacion, nombre_oficial, ...),
   // así que se normalizan igual y se mapean 1 a 1 a sí mismas.
   var keyMap = {};
-  ['id_agrupacion', 'nombre_oficial', 'nombre_corto', 'id_ubicacion', 'region',
-   'provincia', 'distrito', 'localidad', 'tipo_entidad', 'id_agrupacion_madre',
+  ['id_agrupacion', 'tipo_entidad', 'nombre_oficial', 'nombre_corto', 'id_ubicacion', 'region',
+   'provincia', 'distrito', 'localidad', 'id_agrupacion_madre',
    'logo', 'facebook', 'instagram', 'tiktok', 'web', 'visible', 'observacion', 'fuente'
   ].forEach(function (col) { keyMap[normalizeHeader(col)] = col; });
   return readSheetAsObjects('Agrupaciones', keyMap);
+}
+
+/**
+ * Acción temporal de diagnóstico: muestra los encabezados reales de
+ * Participaciones tal cual los lee el script, crudos y normalizados,
+ * para detectar espacios ocultos o diferencias de tildes/mayúsculas.
+ * Se puede borrar después de resolver el problema de mensajeCampeon.
+ */
+function getDebugHeaders() {
+  var sheet = getSpreadsheet().getSheetByName('Participaciones');
+  if (!sheet) throw new Error('No existe la hoja "Participaciones"');
+  var values = sheet.getDataRange().getValues();
+  var headersCrudos = values[0];
+  return {
+    cacheSecondsActivo: CACHE_SECONDS,
+    headers: headersCrudos.map(function (h) {
+      return {
+        crudo: h,
+        length: String(h || '').length,
+        normalizado: normalizeHeader(h)
+      };
+    })
+  };
 }
 
 function getGaleria() {

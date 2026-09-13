@@ -1507,11 +1507,11 @@ function startLiveCompetitionUpdates() {
   loadCompetition2026();
 
   /*
-    Luego actualizamos cada 5 segundos.
+    Luego actualizamos cada 10 segundos.
   */
   liveCompetitionInterval = setInterval(
     loadCompetition2026,
-    5000
+    10000
   );
 }
 

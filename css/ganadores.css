@@ -1,0 +1,517 @@
+:root {
+  --winner-ink: #27202f;
+  --winner-muted: #6f6874;
+  --winner-paper: #fffaf4;
+  --winner-gold: #e5a926;
+  --winner-danzas: #9d2555;
+  --winner-caporales: #196f78;
+  --winner-infantil: #d46b2c;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.winners-page {
+  color: var(--winner-ink);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 8% 5%, rgba(229, 169, 38, .12), transparent 24rem),
+    linear-gradient(180deg, #fff 0, var(--winner-paper) 50%, #fff 100%);
+}
+
+.current-champions,
+.winners-history {
+  width: min(1180px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.current-champions {
+  padding: 78px 0 42px;
+}
+
+.winners-history {
+  padding: 62px 0 96px;
+}
+
+.current-heading,
+.winners-history > .section-heading {
+  max-width: 720px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.current-heading h2,
+.winners-history > .section-heading h2 {
+  margin: 8px 0 10px;
+  color: var(--winner-ink);
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1.08;
+}
+
+.current-heading p,
+.winners-history > .section-heading p {
+  color: var(--winner-muted);
+}
+
+.current-champions-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--champion-columns, 3), minmax(0, 1fr));
+  gap: 22px;
+  justify-content: center;
+}
+
+.current-champions-grid[data-count="1"] {
+  --champion-columns: 1;
+  max-width: 430px;
+  margin-inline: auto;
+}
+
+.current-champions-grid[data-count="2"] {
+  --champion-columns: 2;
+  max-width: 850px;
+  margin-inline: auto;
+}
+
+.current-champion-card {
+  --accent: var(--winner-danzas);
+  position: relative;
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(70, 45, 61, .1);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 18px 54px rgba(68, 42, 53, .12);
+  isolation: isolate;
+}
+
+.current-champion-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -35px -55px auto;
+  z-index: -1;
+  width: 155px;
+  height: 155px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.current-champion-card--caporales { --accent: var(--winner-caporales); }
+.current-champion-card--infantil { --accent: var(--winner-infantil); }
+
+.current-champion-media {
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 82%, #111), var(--accent));
+}
+
+.current-champion-media img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.winner-monogram {
+  display: grid;
+  width: 104px;
+  height: 104px;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, .5);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(255, 255, 255, .12);
+  font: 800 3.2rem/1 "Montserrat", sans-serif;
+  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, .08);
+}
+
+.current-champion-content {
+  padding: 25px 26px 28px;
+}
+
+.current-champion-label,
+.current-champion-year {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.current-champion-label {
+  color: var(--accent);
+  font-size: .76rem;
+  letter-spacing: .1em;
+}
+
+.current-champion-year {
+  margin-top: 13px;
+  color: var(--winner-gold);
+  font-size: .72rem;
+  letter-spacing: .08em;
+}
+
+.current-champion-content h3 {
+  margin: 5px 0 7px;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+  line-height: 1.18;
+}
+
+.current-champion-location {
+  margin: 0;
+  color: var(--winner-muted);
+}
+
+.current-champion-link,
+.winner-history-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--accent);
+  font-family: "Montserrat", sans-serif;
+  font-size: .88rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.current-champion-link:hover,
+.winner-history-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.winner-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 15px;
+}
+
+.winner-filter {
+  border: 1px solid rgba(67, 49, 59, .16);
+  border-radius: 999px;
+  padding: 12px 19px;
+  color: var(--winner-ink);
+  background: rgba(255, 255, 255, .88);
+  font: 700 .9rem/1 "Montserrat", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 7px 22px rgba(68, 42, 53, .07);
+  transition: transform .2s ease, color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.winner-filter:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(68, 42, 53, .13);
+}
+
+.winner-filter.is-active {
+  border-color: var(--winner-ink);
+  color: #fff;
+  background: var(--winner-ink);
+}
+
+.winner-filter:focus-visible {
+  outline: 3px solid rgba(229, 169, 38, .45);
+  outline-offset: 3px;
+}
+
+.winner-filter:disabled {
+  opacity: .42;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.winner-filter-status {
+  min-height: 1.4em;
+  margin: 0 0 35px;
+  color: var(--winner-muted);
+  font-size: .9rem;
+  text-align: center;
+}
+
+.winner-sections {
+  display: grid;
+  gap: 56px;
+}
+
+.winner-group {
+  --accent: var(--winner-danzas);
+  scroll-margin-top: 100px;
+}
+
+.winner-group--caporales { --accent: var(--winner-caporales); }
+.winner-group--infantil { --accent: var(--winner-infantil); }
+
+.winner-group-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 21px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.winner-group-title-block {
+  position: relative;
+  padding-left: 17px;
+}
+
+.winner-group-title-block::before {
+  content: "";
+  position: absolute;
+  inset: 2px auto 2px 0;
+  width: 5px;
+  border-radius: 5px;
+  background: var(--accent);
+}
+
+.winner-group-eyebrow {
+  color: var(--accent);
+  font: 800 .72rem/1.2 "Montserrat", sans-serif;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.winner-group-header h3 {
+  margin: 4px 0 3px;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+}
+
+.winner-group-header p {
+  margin: 0;
+  color: var(--winner-muted);
+}
+
+.winner-group-count {
+  flex: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, white);
+  font: 800 .76rem/1 "Montserrat", sans-serif;
+}
+
+.winner-history-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.winner-history-card {
+  --accent: var(--winner-danzas);
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(70, 45, 61, .1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 10px 30px rgba(68, 42, 53, .07);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.winner-history-card--caporales { --accent: var(--winner-caporales); }
+.winner-history-card--infantil { --accent: var(--winner-infantil); }
+
+.winner-history-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 36px rgba(68, 42, 53, .12);
+}
+
+.winner-history-logo {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 78%, #222), var(--accent));
+}
+
+.winner-history-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.winner-history-logo .winner-monogram {
+  width: 52px;
+  height: 52px;
+  font-size: 1.55rem;
+}
+
+.winner-history-content {
+  min-width: 0;
+}
+
+.winner-history-year {
+  color: var(--accent);
+  font: 800 .75rem/1 "Montserrat", sans-serif;
+  letter-spacing: .08em;
+}
+
+.winner-history-content h3 {
+  margin: 5px 0 4px;
+  overflow-wrap: anywhere;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.22;
+}
+
+.winner-history-location,
+.winner-history-detail {
+  margin: 3px 0 0;
+  color: var(--winner-muted);
+  font-size: .86rem;
+  line-height: 1.35;
+}
+
+.winner-history-detail {
+  color: color-mix(in srgb, var(--winner-ink) 82%, white);
+}
+
+.winner-history-link {
+  margin-top: 9px;
+  font-size: .78rem;
+}
+
+.winners-state {
+  display: grid;
+  min-height: 190px;
+  place-items: center;
+  align-content: center;
+  padding: 30px;
+  border: 1px dashed rgba(70, 45, 61, .2);
+  border-radius: 20px;
+  color: var(--winner-muted);
+  text-align: center;
+}
+
+.winners-state h3,
+.winners-state p {
+  margin: 4px 0;
+}
+
+.winners-state-error {
+  border-color: rgba(157, 37, 85, .28);
+  background: rgba(157, 37, 85, .04);
+}
+
+.winners-loader {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(157, 37, 85, .15);
+  border-top-color: var(--winner-danzas);
+  border-radius: 50%;
+  animation: winners-spin .85s linear infinite;
+}
+
+@keyframes winners-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .current-champions-grid,
+  .current-champions-grid[data-count="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .winner-history-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .current-champions,
+  .winners-history {
+    width: min(100% - 28px, 1180px);
+  }
+
+  .current-champions {
+    padding-top: 54px;
+  }
+
+  .winners-history {
+    padding: 46px 0 72px;
+  }
+
+  .current-champions-grid,
+  .current-champions-grid[data-count="2"],
+  .winner-history-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .current-champion-card {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+
+  .current-champion-media,
+  .current-champion-media img {
+    width: 112px;
+    height: 100%;
+    min-height: 190px;
+  }
+
+  .current-champion-media .winner-monogram {
+    width: 68px;
+    height: 68px;
+    font-size: 2rem;
+  }
+
+  .current-champion-content {
+    padding: 21px 18px;
+  }
+
+  .winner-filter {
+    flex: 1 1 140px;
+    padding-inline: 12px;
+  }
+
+  .winner-group-header {
+    align-items: start;
+  }
+
+  .winner-group-count {
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 390px) {
+  .current-champion-card {
+    grid-template-columns: 1fr;
+  }
+
+  .current-champion-media,
+  .current-champion-media img {
+    width: 100%;
+    height: 180px;
+    min-height: 180px;
+  }
+
+  .winner-history-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+    padding: 16px;
+  }
+
+  .winner-history-logo {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .winner-filter,
+  .winner-history-card {
+    transition: none;
+  }
+
+  .winners-loader {
+    animation-duration: 1.8s;
+  }
+}

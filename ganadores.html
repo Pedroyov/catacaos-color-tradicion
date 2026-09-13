@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ganadores | Catacaos, Color y Tradición</title>
-  <meta name="description"
-    content="Ganadores históricos del concurso Catacaos, Color y Tradición desde su primera edición."> 
+  <meta name="description" content="Ganadores históricos del concurso Catacaos, Color y Tradición desde su primera edición.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ganadores.css">
   <link rel="icon" href="img/logo1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <meta property="og:title" content="Catacaos, Color y Tradición">
-  <meta property="og:description" content="Concurso nacional de danzas folclóricas.">
+  <meta property="og:title" content="Ganadores | Catacaos, Color y Tradición">
+  <meta property="og:description" content="Conoce a los campeones de Danzas Nacionales, Caporales e Infantiles.">
   <meta property="og:image" content="https://pedroyov.github.io/catacaos-color-tradicion/img/logo.png">
-  <meta property="og:url" content="https://pedroyov.github.io/catacaos-color-tradicion/">
+  <meta property="og:url" content="https://pedroyov.github.io/catacaos-color-tradicion/ganadores.html">
   <meta property="og:type" content="website">
 </head>
 <body>
@@ -26,201 +26,92 @@
       <span>Catacaos, Color y Tradición</span>
     </a>
 
-    <button class="menu-btn" id="menuBtn">☰</button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menú">☰</button>
 
     <ul class="nav-links" id="navLinks">
       <li><a href="index.html">Inicio</a></li>
       <li><a href="historia.html">Historia</a></li>
       <li class="dropdown">
-          <div class="dropdown-trigger">
-              <a href="ediciones.html">Ediciones</a>
-              <button type="button" class="dropdown-toggle" aria-label="Mostrar ediciones" aria-expanded="false">▾</button>
-          </div>
-
-          <ul class="dropdown-menu">
-              <li><a href="ediciones/2017.html">2017</a></li>
-              <li><a href="ediciones/2018.html">2018</a></li>
-              <li><a href="ediciones/2019.html">2019</a></li>
-              <li><a href="ediciones/edicion-especial.html">2020</a></li>
-              <li><a href="ediciones/2023.html">2023</a></li>
-              <li><a href="ediciones/2024.html">2024</a></li>
-              <li><a href="ediciones/2026-previas.html">Este Año 2026</a></li>
-          </ul>
+        <div class="dropdown-trigger">
+          <a href="ediciones.html">Ediciones</a>
+          <button type="button" class="dropdown-toggle" aria-label="Mostrar ediciones" aria-expanded="false">▾</button>
+        </div>
+        <ul class="dropdown-menu">
+          <li><a href="ediciones/2017.html">2017</a></li>
+          <li><a href="ediciones/2018.html">2018</a></li>
+          <li><a href="ediciones/2019.html">2019</a></li>
+          <li><a href="ediciones/edicion-especial.html">2020</a></li>
+          <li><a href="ediciones/2023.html">2023</a></li>
+          <li><a href="ediciones/2024.html">2024</a></li>
+          <li><a href="ediciones/2026-previas.html">Este Año 2026</a></li>
+        </ul>
       </li>
-      <li><a href="ganadores.html">Ganadores</a></li>
+      <li><a href="ganadores.html" aria-current="page">Ganadores</a></li>
       <li><a href="galeria.html">Galería</a></li>
       <li><a href="organizacion.html">Organización</a></li>
-      <li><a href="mapa.html">estadisticas</a></li>
+      <li><a href="mapa.html">Estadísticas</a></li>
     </ul>
   </nav>
 </header>
 
 <main>
-
   <section class="page-hero winners-hero">
     <div class="page-hero-content">
       <span>Lista de campeones</span>
       <h1>Ganadores de Catacaos, Color y Tradición</h1>
-      <p>
-        Un reconocimiento a las agrupaciones que dejaron huella en cada edición.
-      </p>
+      <p>Un reconocimiento a las agrupaciones que dejaron huella en cada edición.</p>
     </div>
   </section>
 
-  <section class="champion-highlight">
-    <div class="champion-image">
-      <img src="img//grupos/sentimiento-y-corazon.png" alt="Campeón 2024">
-    </div>
+  <div class="winners-page" id="winners-app" aria-live="polite">
+    <section class="current-champions" id="current-champions-section" aria-labelledby="current-champions-title" hidden>
+      <div class="section-heading current-heading">
+        <span class="section-kicker">La corona vigente</span>
+        <h2 id="current-champions-title">Campeones vigentes</h2>
+        <p>Los últimos ganadores disponibles de cada competencia.</p>
+      </div>
+      <div class="current-champions-grid" id="current-champions-list"></div>
+    </section>
 
-    <div class="champion-info">
-      <span class="tag">Campeón vigente</span>
-      <h2>Ganador 2024</h2>
-      <p>
-        Agrupación campeona de la última edición del concurso.
-      </p>
-      <a href="ediciones/2024.html" class="btn primary">Ver edición 2024</a>
-    </div>
-  </section>
+    <section class="winners-history" aria-labelledby="winners-history-title">
+      <div class="section-heading">
+        <span class="section-kicker">Nuestro historial</span>
+        <h2 id="winners-history-title">Campeones por edición</h2>
+        <p>Explora a las agrupaciones que alcanzaron el primer lugar.</p>
+      </div>
 
-  <section class="winners-list">
-    <div class="section-heading">
-      <span class="section-kicker">Historial</span>
-      <h2>Campeones por edición</h2>
-      <p>Agrupaciones reconocidas con el máximo lugar en cada edición y categoría del concurso.</p>
-    </div>
+      <div class="winner-filters" id="winner-filters" aria-label="Filtrar campeones">
+        <button type="button" class="winner-filter" data-group="danzas" aria-pressed="false">
+          <span aria-hidden="true">✦</span> Danzas Nacionales
+        </button>
+        <button type="button" class="winner-filter" data-group="caporales" aria-pressed="false">
+          <span aria-hidden="true">◆</span> Caporales
+        </button>
+        <button type="button" class="winner-filter" data-group="infantil" aria-pressed="false">
+          <span aria-hidden="true">★</span> Infantiles
+        </button>
+      </div>
 
-    <div class="winner-grid winner-grid-clean">
+      <p class="winner-filter-status" id="winner-filter-status" role="status"></p>
+      <div class="winner-sections" id="winner-sections"></div>
 
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/tierra-de-sol.jpg" alt="Tierra de Sol">
-            </div>
-            <div class="winner-info">
-            <span>2017</span>
-            <h3>Tierra de Sol</h3>
-            <div class="winner-city">Pueblo Nuevo de Colán</div>
-            <p>Campeón de la primera edición</p>
-            </div>
-        </article>
+      <div class="winners-state" id="winners-loading" role="status">
+        <span class="winners-loader" aria-hidden="true"></span>
+        <p>Cargando nuestro historial de campeones…</p>
+      </div>
 
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/tierra-de-sol.jpg" alt="Tierra de Sol">
-            </div>
-            <div class="winner-info">
-            <span>2018</span>
-            <h3>Tierra de Sol</h3>
-            <div class="winner-city">Pueblo Nuevo de Colán</div>
-            <p>Campeón de la segunda edición</p>
-            </div>
-        </article>
+      <div class="winners-state winners-state-error" id="winners-error" role="alert" hidden>
+        <h3>No pudimos cargar los ganadores</h3>
+        <p>Intenta nuevamente en unos instantes.</p>
+        <button type="button" class="btn primary" id="winners-retry">Volver a intentar</button>
+      </div>
 
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/mama-gusti.jpg" alt="Campeón 2019">
-            </div>
-            <div class="winner-info">
-            <span>2019</span>
-            <h3>Mamá Gusti</h3>
-            <div class="winner-city">Sullana</div>
-            <p>Campeón edición 2019</p>
-            </div>
-        </article>
-
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/union-independiente.jpg" alt="Campeón Carnavales 2020">
-            </div>
-            <div class="winner-info">
-            <span>2020</span>
-            <h3>Unión Independiente</h3>
-            <div class="winner-city">SANTIAGO LEÓN DE CHONGOS BAJOS</div>
-            <p>Campeón Categoría Carnavales</p>
-            </div>
-        </article>
-
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/cristo-moreno.jpg" alt="Campeón Libre 2020">
-            </div>
-            <div class="winner-info">
-            <span>2020</span>
-            <h3>Cristo Moreno</h3>
-            <div class="winner-city">Ica</div>
-            <p>Campeón Categoría Libre</p>
-            </div>
-        </article>
-
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/sentimiento-y-corazon.png" alt="Ganador 2023">
-            </div>
-            <div class="winner-info">
-            <span>2023</span>
-            <h3>Sentimiento y Corazón</h3>
-            <div class="winner-city">La Unión</div>
-            <p>Primer lugar compartido</p>
-            </div>
-        </article>
-
-        <article class="winner-card clean-card">
-            <div class="winner-logo">
-            <img src="img/grupos/peru-ritmo-color.jpg" alt="Ganador 2023">
-            </div>
-            <div class="winner-info">
-            <span>2023</span>
-            <h3>Perú Ritmo y Color</h3>
-            <div class="winner-city">Loma negra - La Arena</div>
-            <p>Primer lugar compartido</p>
-            </div>
-        </article>
-
-        <article class="winner-card clean-card featured-winner">
-            <div class="winner-logo">
-            <img src="img/grupos/sentimiento-y-corazon.png" alt="Campeón 2024">
-            </div>
-            <div class="winner-info">
-            <span>2024</span>
-            <h3>Sentimiento y Corazón</h3>
-            <div class="winner-city">La Unión</div>
-            <p>Campeón Edición 2024</p>
-            </div>
-        </article>
-
-    </div>
-  </section>
-
-  <section class="child-winners-section">
-
-    <div class="child-header">
-        <span class="tag">Nueva categoría</span>
-        <h2>Campeones Infantiles</h2>
-        <p>
-        Reconocimiento a las nuevas generaciones que mantienen viva nuestra cultura.
-        </p>
-    </div>
-
-    <div class="winner-grid winner-grid-clean">
-
-        <article class="winner-card clean-card infant-card">
-
-        <div class="winner-logo">
-            <img src="img/grupos/sentimiento-MG.jpg" alt="Campeón Infantil 2024">
-        </div>
-
-        <div class="winner-info">
-            <span>2024</span>
-            <h3>Sentimiento MG</h3>
-            <div class="winner-city">Sullana</div>
-            <p>🏆 Campeón Categoría Infantil</p>
-        </div>
-
-        </article>
-
-    </div>
-
-  </section>
-
+      <div class="winners-state" id="winners-empty" hidden>
+        <h3>Aún no hay campeones publicados</h3>
+        <p>Cuando los resultados estén disponibles aparecerán aquí.</p>
+      </div>
+    </section>
+  </div>
 </main>
 
 <footer class="footer">
@@ -228,14 +119,12 @@
     <div class="footer-content">
       <h2>Catacaos, Color y Tradición</h2>
       <p class="footer-slogan">Arte • Cultura • Tradición</p>
-
       <div class="footer-links">
         <a href="historia.html">Historia</a>
         <a href="ediciones.html">Ediciones</a>
         <a href="ganadores.html">Ganadores</a>
         <a href="galeria.html">Galería</a>
       </div>
-
       <p class="footer-location">Catacaos - Piura, Perú</p>
       <p class="copy">© 2026 Catacaos, Color y Tradición.</p>
     </div>
@@ -243,5 +132,8 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script src="js/config.js"></script>
+<script src="js/data-service.js"></script>
+<script src="js/ganadores.js"></script>
 </body>
 </html>

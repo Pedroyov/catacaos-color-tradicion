@@ -604,6 +604,42 @@ const groupRanking = document.getElementById(
   "group-ranking"
 );
 
+const provincesLabel = document.getElementById(
+  "region-provinces-label"
+);
+
+const groupsLabel = document.getElementById(
+  "region-groups-label"
+);
+
+const competitionSummary = document.getElementById(
+  "competition-summary"
+);
+
+const competitionStats = document.getElementById(
+  "competition-stats"
+);
+
+const COMPETITION_GROUPS = [
+  {
+    id: "danzas",
+    label: "Danzas Nacionales",
+    kicker: "Categoría mayores"
+  },
+  {
+    id: "infantil",
+    label: "Infantiles",
+    kicker: "Nuevas generaciones"
+  },
+  {
+    id: "caporales",
+    label: "Caporales",
+    kicker: "Nueva modalidad"
+  }
+];
+
+let participacionesActuales = [];
+
 const piuraProvinceNames = {
   ayabaca: "Ayabaca",
   huancabamba: "Huancabamba",
@@ -663,6 +699,94 @@ function getGeneralTotals() {
     agrupaciones: totalGroups,
     participaciones: totalParticipations
   };
+}
+
+function normalizeMapText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
+function sameMapText(first, second) {
+  return normalizeMapText(first) === normalizeMapText(second);
+}
+
+function getCompetitionId(participation) {
+  const explicit = normalizeMapText(
+    participation.grupoGanadores || participation.grupo || ""
+  );
+  const category = normalizeMapText(participation.categoria);
+  const modality = normalizeMapText(participation.modalidad);
+
+  if (explicit.includes("infantil")) return "infantil";
+  if (explicit.includes("caporal")) return "caporales";
+  if (explicit.includes("danza")) return "danzas";
+  if (category.includes("infantil")) return "infantil";
+  if (category.includes("caporal") || modality.includes("caporal")) {
+    return "caporales";
+  }
+  return "danzas";
+}
+
+function getCompetitionMeta(id) {
+  return COMPETITION_GROUPS.find((competition) => competition.id === id);
+}
+
+function renderCompetitionSummary(participations) {
+  if (!competitionSummary || !competitionStats || !participations.length) return;
+
+  const latestYear = Math.max(
+    ...participations.map((item) => Number(item.anio) || 0)
+  );
+
+  const cards = COMPETITION_GROUPS.map((competition) => {
+    const rows = participations.filter(
+      (item) => getCompetitionId(item) === competition.id
+    );
+    if (!rows.length) return "";
+
+    const groups = new Set(
+      rows.map((item) => normalizeMapText(item.agrupacion)).filter(Boolean)
+    );
+    const participationsSet = new Set(
+      rows.map((item) =>
+        `${normalizeMapText(item.agrupacion)}-${item.anio || ""}`
+      )
+    );
+    const years = Array.from(
+      new Set(rows.map((item) => Number(item.anio)).filter(Boolean))
+    ).sort((a, b) => a - b);
+    const firstYear = years[0];
+    const lastYear = years[years.length - 1];
+    const period =
+      firstYear === lastYear
+        ? `Presente desde ${firstYear}${lastYear === latestYear ? " · edición más reciente" : ""}`
+        : `Historia registrada: ${firstYear}–${lastYear}`;
+
+    return `
+      <article class="competition-stat-card competition-stat-card--${competition.id}">
+        <span class="competition-card-kicker">${escapeHtml(competition.kicker)}</span>
+        <h3>${escapeHtml(competition.label)}</h3>
+        <div class="competition-card-values">
+          <div>
+            <strong>${participationsSet.size}</strong>
+            <span>participaciones</span>
+          </div>
+          <div>
+            <strong>${groups.size}</strong>
+            <span>agrupaciones</span>
+          </div>
+        </div>
+        <span class="competition-card-period">${escapeHtml(period)}</span>
+      </article>
+    `;
+  }).filter(Boolean);
+
+  competitionStats.innerHTML = cards.join("");
+  competitionSummary.hidden = cards.length === 0;
 }
 
 /*
@@ -855,6 +979,9 @@ function selectRegion(regionId) {
   provincesCount.textContent =
     region.provincias.length;
 
+  if (provincesLabel) provincesLabel.textContent = "Provincias";
+  if (groupsLabel) groupsLabel.textContent = "Agrupaciones";
+
   groupsCount.textContent =
     region.agrupaciones.length;
 
@@ -938,8 +1065,13 @@ function showProvince(regionId, provinceName) {
   groupsBlockTitle.textContent = `Agrupaciones de ${provinceName}`;
 
   const provinceGroups = region.agrupaciones.filter(
-    (group) => group.provincia === provinceName
+    (group) => sameMapText(group.provincia, provinceName)
   );
+
+  const districtEntry = Object.entries(
+    region.distritosPorProvincia || {}
+  ).find(([province]) => sameMapText(province, provinceName));
+  const districts = districtEntry ? districtEntry[1] : [];
 
   const totals = provinceGroups.reduce(
     (result, group) => {
@@ -958,10 +1090,35 @@ function showProvince(regionId, provinceName) {
   regionDescription.textContent =
     `Provincia de ${provinceName}, región ${region.nombre}.`;
 
-  provincesCount.textContent = 1;
+  provincesCount.textContent = districts.length || 1;
+  if (provincesLabel) {
+    provincesLabel.textContent = districts.length === 1
+      ? "Distrito"
+      : districts.length
+        ? "Distritos"
+        : "Provincia";
+  }
+  if (groupsLabel) groupsLabel.textContent = "Agrupaciones";
   groupsCount.textContent = provinceGroups.length;
   participationsCount.textContent = totals.participaciones;
   titlesCount.textContent = totals.titulos;
+
+  const districtButtons = districts.length
+    ? `
+      <div class="district-navigation">
+        <span class="district-navigation-label">Filtrar por distrito</span>
+        ${districts.map((district) => `
+          <button
+            type="button"
+            class="region-tag district-button"
+            data-district="${escapeHtml(district)}"
+          >
+            ${escapeHtml(district)}
+          </button>
+        `).join("")}
+      </div>
+    `
+    : "";
 
   provincesContainer.innerHTML = `
     <button
@@ -971,6 +1128,7 @@ function showProvince(regionId, provinceName) {
     >
       ← Volver a ${escapeHtml(region.nombre)}
     </button>
+    ${districtButtons}
   `;
 
   renderGroups(provinceGroups);
@@ -983,6 +1141,14 @@ function showProvince(regionId, provinceName) {
     selectRegion(regionId);
   });
 
+  provincesContainer
+    .querySelectorAll(".district-button")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        showDistrict(regionId, provinceName, button.dataset.district);
+      });
+    });
+
   document
     .querySelectorAll(".province-button")
     .forEach((button) => {
@@ -994,6 +1160,69 @@ function showProvince(regionId, provinceName) {
       behavior: "smooth",
       block: "start"
     });
+  }
+}
+
+function showDistrict(regionId, provinceName, districtName) {
+  const region = regiones[regionId];
+  if (!region) return;
+
+  const districtGroups = region.agrupaciones.filter(
+    (group) =>
+      sameMapText(group.provincia, provinceName) &&
+      sameMapText(group.distrito, districtName)
+  );
+  const totals = districtGroups.reduce(
+    (result, group) => {
+      result.participaciones += group.participaciones;
+      result.titulos += group.titulos;
+      return result;
+    },
+    { participaciones: 0, titulos: 0 }
+  );
+
+  provinceBlockTitle.textContent = "Navegación territorial";
+  groupsBlockTitle.textContent = `Agrupaciones de ${districtName}`;
+  regionName.textContent = districtName;
+  regionDescription.textContent =
+    `Distrito de ${districtName}, provincia de ${provinceName}, región ${region.nombre}.`;
+
+  provincesCount.textContent = 1;
+  groupsCount.textContent = districtGroups.length;
+  participationsCount.textContent = totals.participaciones;
+  titlesCount.textContent = totals.titulos;
+  if (provincesLabel) provincesLabel.textContent = "Provincia";
+  if (groupsLabel) groupsLabel.textContent = "Agrupaciones";
+
+  provincesContainer.innerHTML = `
+    <button
+      type="button"
+      class="region-tag province-back-button"
+      id="district-back-button"
+    >
+      ← Volver a ${escapeHtml(provinceName)}
+    </button>
+    <span class="region-tag district-button is-active">
+      ${escapeHtml(districtName)}
+    </span>
+  `;
+
+  if (districtGroups.length) {
+    renderGroups(districtGroups);
+  } else {
+    groupsContainer.innerHTML = `
+      <div class="district-empty">
+        Todavía no hay agrupaciones publicadas para este distrito.
+      </div>
+    `;
+  }
+
+  document
+    .getElementById("district-back-button")
+    ?.addEventListener("click", () => showProvince(regionId, provinceName));
+
+  if (window.innerWidth <= 900) {
+    contentPanel.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
@@ -1027,19 +1256,37 @@ function renderProvinces(provinces, regionId) {
 
 function renderGroups(groups) {
   groupsContainer.innerHTML = groups
-    .map(
-      (group) => `
-        <article class="region-group-card">
+    .map((group) => {
+      const competitions = Array.isArray(group.competencias)
+        ? group.competencias
+        : [];
+      const cardType = competitions.length > 1
+        ? "mixta"
+        : competitions[0]?.id || "danzas";
+      const badges = competitions.map((competition) => {
+        const meta = getCompetitionMeta(competition.id);
+        if (!meta) return "";
+        return `
+          <span class="group-competition-badge group-competition-badge--${competition.id}">
+            ${escapeHtml(meta.label)}
+          </span>
+        `;
+      }).join("");
+      const locationParts = [group.localidad, group.distrito, group.provincia]
+        .filter((value, index, values) =>
+          value && values.findIndex((item) => sameMapText(item, value)) === index
+        );
+
+      return `
+        <article class="region-group-card region-group-card--${cardType}">
           <div>
             <h4>${escapeHtml(group.nombre)}</h4>
 
             <p>
-              ${
-                    group.localidad
-                    ? `${escapeHtml(group.localidad)} · ${escapeHtml(group.provincia)}`
-                    : escapeHtml(group.provincia)
-                }
+              ${locationParts.map(escapeHtml).join(" · ")}
             </p>
+
+            ${badges ? `<div class="group-competitions">${badges}</div>` : ""}
           </div>
 
           <div class="group-history">
@@ -1069,8 +1316,8 @@ function renderGroups(groups) {
               .join(", ")}
           </p>
         </article>
-      `
-    )
+      `;
+    })
     .join("");
 }
 
@@ -1420,28 +1667,76 @@ function getHeatLevel(participations) {
 */
 
 async function computeRegionesFromApi() {
-  const [regionesApi, participaciones] = await Promise.all([
+  const [regionesApi, participaciones, ubicaciones, agrupaciones] = await Promise.all([
     CCTData.getRegiones(),
-    CCTData.getParticipaciones()
+    CCTData.getParticipaciones(),
+    CCTData.getUbicaciones().catch(() => []),
+    CCTData.getAgrupaciones().catch(() => [])
   ]);
+
+  participacionesActuales = participaciones;
 
   const metaByCode = {};
   const codeByName = {};
 
+  const locationById = new Map(
+    ubicaciones.map((location) => [
+      normalizeMapText(location.idUbicacion),
+      location
+    ])
+  );
+
+  const groupReferences = agrupaciones.map((group) => {
+    const location = locationById.get(normalizeMapText(group.id_ubicacion)) || {};
+    return {
+      group,
+      names: [group.nombre_oficial, group.nombre_corto]
+        .map(normalizeMapText)
+        .filter(Boolean),
+      location
+    };
+  });
+
+  function findGroupReference(participationName) {
+    const key = normalizeMapText(participationName);
+    return groupReferences.find((reference) =>
+      reference.names.some((name) =>
+        key === name || key.endsWith(name) || name.endsWith(key)
+      )
+    );
+  }
+
   regionesApi.forEach((r) => {
     metaByCode[r.idMapa] = r;
-    codeByName[r.region] = r.idMapa;
+    codeByName[normalizeMapText(r.region)] = r.idMapa;
   });
 
   const result = {};
 
   participaciones.forEach((p) => {
-    if (!p.region || !p.agrupacion) return;
+    if (!p.agrupacion) return;
 
-    const code = codeByName[p.region];
+    const reference = findGroupReference(p.agrupacion);
+    const groupMeta = reference?.group || {};
+    const locationMeta = reference?.location || {};
+    const regionName = p.region || groupMeta.region || locationMeta.region;
+    const provinceName = p.provincia || groupMeta.provincia || locationMeta.provincia || "";
+    const districtName =
+      locationMeta.distrito ||
+      groupMeta.distrito ||
+      p.distritoLocalidad ||
+      "";
+    const localityName =
+      locationMeta.localidad ||
+      groupMeta.localidad ||
+      (p.distritoLocalidad && !sameMapText(p.distritoLocalidad, districtName)
+        ? p.distritoLocalidad
+        : "");
+    const officialName = groupMeta.nombre_oficial || p.agrupacion;
+    const code = codeByName[normalizeMapText(regionName)];
     if (!code) {
       console.warn(
-        `Participación con región desconocida "${p.region}" (agrupación: ${p.agrupacion}); se omite.`
+        `Participación con región desconocida "${regionName}" (agrupación: ${p.agrupacion}); se omite.`
       );
       return;
     }
@@ -1449,7 +1744,7 @@ async function computeRegionesFromApi() {
     if (!result[code]) {
       const meta = metaByCode[code] || {};
       result[code] = {
-        nombre: meta.region || p.region,
+        nombre: meta.region || regionName,
         descripcion: meta.descripcion || "",
         provinciasSet: new Set(),
         agrupacionesMap: new Map()
@@ -1457,45 +1752,72 @@ async function computeRegionesFromApi() {
     }
 
     const region = result[code];
-    if (p.provincia) region.provinciasSet.add(p.provincia);
+    if (provinceName) region.provinciasSet.add(provinceName);
 
-    if (!region.agrupacionesMap.has(p.agrupacion)) {
-      const localidad =
-        p.distritoLocalidad &&
-        p.distritoLocalidad.trim().toLowerCase() !==
-          String(p.provincia || "").trim().toLowerCase()
-          ? p.distritoLocalidad
-          : undefined;
-
-      region.agrupacionesMap.set(p.agrupacion, {
-        nombre: p.agrupacion,
-        provincia: p.provincia || "",
-        localidad,
+    const groupKey = normalizeMapText(officialName);
+    if (!region.agrupacionesMap.has(groupKey)) {
+      region.agrupacionesMap.set(groupKey, {
+        nombre: officialName,
+        provincia: provinceName,
+        distrito: districtName,
+        localidad: localityName,
         titulos: 0,
-        aniosSet: new Set()
+        aniosSet: new Set(),
+        competenciasMap: new Map()
       });
     }
 
-    const group = region.agrupacionesMap.get(p.agrupacion);
+    const group = region.agrupacionesMap.get(groupKey);
     if (String(p.campeon).toUpperCase() === "SI") group.titulos += 1;
-    if (p.anio) group.aniosSet.add(String(p.anio));
+    if (p.anio) {
+      group.aniosSet.add(String(p.anio));
+      const competitionId = getCompetitionId(p);
+      if (!group.competenciasMap.has(competitionId)) {
+        group.competenciasMap.set(competitionId, new Set());
+      }
+      group.competenciasMap.get(competitionId).add(String(p.anio));
+    }
   });
 
   const finalRegiones = {};
   Object.entries(result).forEach(([code, region]) => {
+    const groups = Array.from(region.agrupacionesMap.values())
+      .map((g) => ({
+        nombre: g.nombre,
+        provincia: g.provincia,
+        distrito: g.distrito,
+        localidad: g.localidad,
+        participaciones: g.aniosSet.size,
+        titulos: g.titulos,
+        anios: Array.from(g.aniosSet).sort(),
+        competencias: Array.from(g.competenciasMap.entries()).map(
+          ([id, years]) => ({ id, participaciones: years.size })
+        )
+      }));
+    const districtsByProvince = {};
+
+    groups.forEach((group) => {
+      if (!group.provincia || !group.distrito) return;
+      if (!districtsByProvince[group.provincia]) {
+        districtsByProvince[group.provincia] = new Map();
+      }
+      districtsByProvince[group.provincia].set(
+        normalizeMapText(group.distrito),
+        group.distrito
+      );
+    });
+
     finalRegiones[code] = {
       nombre: region.nombre,
       descripcion: region.descripcion,
-      provincias: Array.from(region.provinciasSet),
-      agrupaciones: Array.from(region.agrupacionesMap.values())
-        .map((g) => ({
-          nombre: g.nombre,
-          provincia: g.provincia,
-          localidad: g.localidad,
-          participaciones: g.aniosSet.size,
-          titulos: g.titulos,
-          anios: Array.from(g.aniosSet).sort()
-        }))
+      provincias: Array.from(region.provinciasSet).sort((a, b) => a.localeCompare(b, "es")),
+      distritosPorProvincia: Object.fromEntries(
+        Object.entries(districtsByProvince).map(([province, districts]) => [
+          province,
+          Array.from(districts.values()).sort((a, b) => a.localeCompare(b, "es"))
+        ])
+      ),
+      agrupaciones: groups
     };
   });
 
@@ -1516,6 +1838,7 @@ document.addEventListener(
 
       if (datosReales && Object.keys(datosReales).length > 0) {
         regiones = datosReales;
+        renderCompetitionSummary(participacionesActuales);
       } else {
         console.warn(
           "La API respondió sin datos utilizables; se usan los datos de respaldo del mapa."
@@ -1539,7 +1862,7 @@ document.addEventListener(
         resetButton,
 
         availableProvinces:
-            regiones["PE-PIU"].provincias,
+            regiones["PE-PIU"]?.provincias || [],
 
         onProvinceSelect: (provinceName) => {
             showProvince(

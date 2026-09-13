@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ganadores | Catacaos, Color y Tradición</title>
+  <title>Estadísticas | Catacaos, Color y Tradición</title>
   <meta name="description"
-    content="Ganadores históricos del concurso Catacaos, Color y Tradición desde su primera edición."> 
+    content="Estadísticas de participación por región, provincia, distrito y competencia de Catacaos, Color y Tradición.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mapa.css">
   <link rel="icon" href="img/logo1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-  <meta property="og:title" content="Catacaos, Color y Tradición">
-  <meta property="og:description" content="Concurso nacional de danzas folclóricas.">
+  <meta property="og:title" content="Estadísticas | Catacaos, Color y Tradición">
+  <meta property="og:description" content="Explora la participación histórica por región, provincia, distrito y competencia.">
   <meta property="og:image" content="https://pedroyov.github.io/catacaos-color-tradicion/img/logo.png">
   <meta property="og:url" content="https://pedroyov.github.io/catacaos-color-tradicion/">
   <meta property="og:type" content="website">
@@ -106,6 +107,22 @@
         </article>
       </div>
 
+    </div>
+  </section>
+
+  <!-- COMPETENCIAS -->
+  <section class="competition-summary section" id="competition-summary" hidden>
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-kicker">Tres formas de vivir la tradición</span>
+        <h2>Participación por competencia</h2>
+        <p>
+          Una lectura comparativa de Danzas Nacionales, la categoría Infantil
+          y Caporales, calculada directamente desde las participaciones.
+        </p>
+      </div>
+
+      <div class="competition-stats" id="competition-stats"></div>
     </div>
   </section>
 
@@ -207,12 +224,12 @@
             <div class="region-numbers">
               <article>
                 <strong id="region-provinces-count">0</strong>
-                <span>Provincias</span>
+                <span id="region-provinces-label">Provincias</span>
               </article>
 
               <article>
                 <strong id="region-groups-count">0</strong>
-                <span>Agrupaciones</span>
+                <span id="region-groups-label">Agrupaciones</span>
               </article>
 
               <article>
