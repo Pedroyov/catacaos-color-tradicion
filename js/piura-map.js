@@ -218,6 +218,34 @@ window.PiuraMap = (() => {
         }
       );
     });
+
+    fitMapToContent(svg);
+  }
+
+  function fitMapToContent(svg) {
+    // El SVG original tiene un lienzo mucho más ancho que el dibujo. Ajustar
+    // el viewBox al contenido hace que las provincias sean realmente grandes
+    // en celular sin depender de escalas o márgenes negativos hardcodeados.
+    requestAnimationFrame(() => {
+      try {
+        const bounds = svg.getBBox();
+        if (!bounds.width || !bounds.height) return;
+
+        const padding = Math.max(bounds.width, bounds.height) * 0.045;
+        svg.setAttribute(
+          "viewBox",
+          [
+            bounds.x - padding,
+            bounds.y - padding,
+            bounds.width + padding * 2,
+            bounds.height + padding * 2
+          ].join(" ")
+        );
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      } catch (error) {
+        console.warn("PiuraMap: no se pudo ajustar el encuadre del SVG.", error);
+      }
+    });
   }
 
   function selectProvince(

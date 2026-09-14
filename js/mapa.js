@@ -655,6 +655,10 @@ const mapTitle = document.getElementById(
   "map-title"
 );
 
+const mapInstruction = document.querySelector(
+  ".map-instruction"
+);
+
 /*
 |--------------------------------------------------------------------------
 | Funciones de cálculo
@@ -818,6 +822,11 @@ async function loadMap() {
     if (mapTitle) {
     mapTitle.textContent =
         "Regiones participantes";
+    }
+
+    if (mapInstruction) {
+      mapInstruction.textContent =
+        "Selecciona una región coloreada para consultar su información.";
     }
 
     if (resetButton) {
@@ -1019,6 +1028,11 @@ function selectRegion(regionId) {
         </div>
       </div>
     `;
+
+    if (mapInstruction) {
+      mapInstruction.textContent =
+        "Selecciona una provincia de Piura para explorar sus distritos y agrupaciones.";
+    }
 
     window.PiuraMap?.open();
   } else {
@@ -1292,11 +1306,7 @@ function renderGroups(groups) {
           <div class="group-history">
             <span>
               <strong>${group.participaciones}</strong>
-              participación${
-                group.participaciones === 1
-                  ? ""
-                  : "es"
-              }
+              ${group.participaciones === 1 ? "participación" : "participaciones"}
             </span>
 
             <span>
@@ -1574,9 +1584,7 @@ function renderProvinceRanking() {
 
             <small>
               ${province.agrupaciones}
-              agrupación${
-                province.agrupaciones === 1 ? "" : "es"
-              }
+              ${province.agrupaciones === 1 ? "agrupación" : "agrupaciones"}
             </small>
           </div>
         </article>
