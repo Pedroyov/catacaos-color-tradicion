@@ -171,7 +171,8 @@ function getEdiciones() {
     'categoriasrealizadas': 'categorias',
     'nagrupaciones': 'numAgrupaciones',
     'ndanzantes': 'numDanzantes',
-    'publicoestimado': 'publicoEstimado'
+    'publicoestimado': 'publicoEstimado',
+    'url': 'url'
   });
 }
 
