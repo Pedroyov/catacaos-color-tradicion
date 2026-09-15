@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ediciones | Catacaos, Color y Tradición</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ediciones.css">
   <link rel="icon" href="img/logo1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,131 +53,168 @@
 
   <section class="page-hero ediciones-hero">
     <div class="page-hero-content">
-      <span>Recorrido</span>
+      <span>Historia viva desde 2017</span>
       <h1>Ediciones del concurso</h1>
       <p>
-        Cada edición representa una etapa importante en la historia de
-        Catacaos, Color y Tradición.
+        Un viaje por los años, las agrupaciones y los momentos que han
+        construido Catacaos, Color y Tradición.
       </p>
     </div>
   </section>
 
   <section class="editions-stats">
     <div class="edition-stat">
-      <h3>5+</h3>
+      <h3 id="stat-ediciones-doc">5+</h3>
       <p>Ediciones documentadas</p>
     </div>
     <div class="edition-stat">
-      <h3>1+</h3>
+      <h3 id="stat-edicion-especial">1+</h3>
       <p>Edición Especial</p>
     </div>
     <div class="edition-stat">
-      <h3>35+</h3>
+      <h3 id="stat-agrupaciones-ed">35+</h3>
       <p>Agrupaciones participantes</p>
     </div>
     <div class="edition-stat">
-      <h3>2017</h3>
+      <h3 id="stat-anio-inicio">2017</h3>
       <p>Año de inicio</p>
     </div>
   </section>
 
-  <section class="editions-section">
+  <section class="current-edition-section" aria-labelledby="current-edition-title">
+    <div class="current-edition-card">
+      <div class="current-edition-image">
+        <img src="img/ediciones/2026-portada.jpeg" alt="Presentación de Catacaos, Color y Tradición 2026">
+        <span class="current-edition-status"><i aria-hidden="true"></i> Próxima edición</span>
+      </div>
+
+      <div class="current-edition-content">
+        <span class="current-edition-kicker">La historia continúa</span>
+        <div class="current-edition-heading">
+          <div class="current-edition-date" aria-label="25 de octubre de 2026">
+            <strong>25</strong>
+            <span>OCT<br>2026</span>
+          </div>
+          <div>
+            <h2 id="current-edition-title">Una nueva edición está por comenzar</h2>
+            <p>Más danza, nuevas categorías y el mismo orgullo por nuestras tradiciones.</p>
+          </div>
+        </div>
+
+        <div class="current-edition-categories" aria-label="Competencias de la edición 2026">
+          <span>Danzas Nacionales</span>
+          <span>Caporales</span>
+          <span>Infantiles</span>
+        </div>
+
+        <a class="current-edition-link" href="ediciones/2026-previas.html">Ver información de la edición <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="editions-section" id="archivo-ediciones">
     <div class="section-heading">
-      <span class="section-kicker">Todas las ediciones</span>
+      <span class="section-kicker">Archivo histórico</span>
       <h2>Una historia contada año tras año</h2>
-      <p>Un recorrido visual por los años que han marcado el crecimiento del concurso.</p>
+      <p>Selecciona una edición para revivir sus protagonistas, resultados y momentos memorables.</p>
     </div>
 
-    <div class="edition-row reveal-left">
+    <div class="edition-row reveal-left" data-year="2017">
       <div class="edition-image">
         <img src="img/ediciones/2017.jpg" alt="Edición 2017">
       </div>
       <div class="edition-text">
-        <span class="edition-badge special">⭐ Primera edición</span>
-        <span>2017</span>
-        <h3>2017 · El comienzo de una tradición</h3>
+        <div class="edition-meta">
+          <span class="edition-badge special">Primera edición</span>
+          <span class="edition-year">2017</span>
+        </div>
+        <h3>El comienzo de una tradición</h3>
         <p>
           Nace oficialmente el Concurso de Danzas y Estampas Folclóricas
           Catacaos, Color y Tradición.
         </p>
-        <a href="ediciones/2017.html">Ver edición →</a>
+        <a href="ediciones/2017.html">Descubrir la edición <span aria-hidden="true">→</span></a>
       </div>
     </div>
 
-    <div class="edition-row reverse">
+    <div class="edition-row reverse" data-year="2018">
       <div class="edition-image">
         <img src="img/ediciones/2018.jpg" alt="Edición 2018">
       </div>
       <div class="edition-text">
-        <span>2018</span>
+        <div class="edition-meta"><span class="edition-year">2018</span></div>
         <h3>Crecimiento del concurso</h3>
         <p>
           El evento continúa fortaleciéndose con mayor participación y
           una propuesta artística más sólida.
         </p>
-        <a href="ediciones/2018.html">Ver edición →</a>
+        <a href="ediciones/2018.html">Descubrir la edición <span aria-hidden="true">→</span></a>
       </div>
     </div>
 
-    <div class="edition-row reveal-left">
+    <div class="edition-row reveal-left" data-year="2019">
       <div class="edition-image">
         <img src="img/ediciones/2019.jpg" alt="Edición 2019">
       </div>
       <div class="edition-text">
-        <span>2019</span>
+        <div class="edition-meta"><span class="edition-year">2019</span></div>
         <h3>Consolidación cultural</h3>
         <p>
           Una edición que reafirma el valor del concurso como espacio de
           identidad, danza y tradición.
         </p>
-        <a href="ediciones/2019.html">Ver edición →</a>
+        <a href="ediciones/2019.html">Descubrir la edición <span aria-hidden="true">→</span></a>
       </div>
     </div>
 
-    <div class="edition-row reverse">
+    <div class="edition-row reverse edition-row-special" data-year="2020">
       <div class="edition-image">
         <img src="img/ediciones/2020.jpg" alt="Edición 2020">
       </div>
       <div class="edition-text">
-        <span class="edition-badge special">⭐ Edición especial</span>
-        <span>2020</span>
-        <h3>2020 · Una edición diferente</h3>
+        <div class="edition-meta">
+          <span class="edition-badge special">Edición especial virtual</span>
+          <span class="edition-year">2020</span>
+        </div>
+        <h3>Una edición diferente</h3>
         <p>
           El concurso se adapta a un nuevo contexto y mantiene viva la
           esencia cultural desde otra modalidad.
         </p>
-        <a href="ediciones/2020.html">Ver edición →</a>
+        <a href="ediciones/edicion-especial.html">Descubrir la edición <span aria-hidden="true">→</span></a>
       </div>
     </div>
 
-    <div class="edition-row">
+    <div class="edition-row" data-year="2023">
       <div class="edition-image">
         <img src="img/ediciones/2023.jpg" alt="Edición 2023">
       </div>
       <div class="edition-text">
-        <span>2023</span>
+        <div class="edition-meta"><span class="edition-year">2023</span></div>
         <h3>Retorno presencial</h3>
         <p>
           La danza vuelve a reunir a agrupaciones, público y comunidad en
           una nueva etapa del concurso.
         </p>
-        <a href="ediciones/2023.html">Ver edición →</a>
+        <a href="ediciones/2023.html">Descubrir la edición <span aria-hidden="true">→</span></a>
       </div>
     </div>
 
-    <div class="edition-row reverse">
+    <div class="edition-row reverse" data-year="2024">
       <div class="edition-image">
         <img src="img/ediciones/2024.jpg" alt="Edición 2024">
       </div>
       <div class="edition-text">
-        <span class="edition-badge special">⭐ Categoría infantil</span>
-        <span>2024</span>
-        <h3>2024 · Nuevas generaciones en escena</h3>
+        <div class="edition-meta">
+          <span class="edition-badge special">Estreno de categoría Infantil</span>
+          <span class="edition-year">2024</span>
+        </div>
+        <h3>Nuevas generaciones en escena</h3>
         <p>
           La edición incorpora nuevas propuestas y fortalece la participación
           de agrupaciones infantiles.
         </p>
-        <a href="ediciones/2024.html">Ver edición →</a>
+        <a href="ediciones/2024.html">Descubrir la edición <span aria-hidden="true">→</span></a>
       </div>
     </div>
 
@@ -203,6 +241,9 @@
   </div>
 </footer>
 
+<script src="js/config.js"></script>
+<script src="js/data-service.js"></script>
+<script src="js/resumen.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
