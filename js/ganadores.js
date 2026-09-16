@@ -235,7 +235,7 @@
     if (winner.detail) content.appendChild(create('p', 'winner-history-detail', winner.detail));
     if (winner.url) {
       var link = create('a', 'winner-history-link', 'Conocer la edición');
-      link.href = winner.url;
+      link.href = 'ediciones/'+winner.url;
       content.appendChild(link);
     }
     card.appendChild(content);

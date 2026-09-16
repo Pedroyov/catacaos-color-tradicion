@@ -376,6 +376,11 @@ const contestLiveUpdate =
     "contest-live-update"
   );
 
+const contestLiveJump =
+  document.getElementById(
+    "contest-live-jump"
+  );
+
 
 function renderContestLiveStatus(data) {
   if (!contestLivePanel) {
@@ -383,8 +388,8 @@ function renderContestLiveStatus(data) {
   }
 
   if (
-    data.mostrar !== "SI" ||
-    data.estado !== "EN_VIVO"
+    !isLiveAffirmative(data.mostrar) ||
+    normalizeLiveValue(data.estado) !== "EN_VIVO"
   ) {
     contestLivePanel.hidden = true;
     return;
@@ -423,6 +428,24 @@ const liveResultsContainer =
     "live-results-container"
   );
 
+const liveResultsSection =
+  document.getElementById("resultados");
+
+const liveResultsNavLink =
+  document.getElementById(
+    "live-results-nav-link"
+  );
+
+const liveRefreshSeconds =
+  document.getElementById(
+    "live-refresh-seconds"
+  );
+
+const liveConnectionState =
+  document.getElementById(
+    "live-connection-state"
+  );
+
 const classifiedSection =
   document.getElementById("clasificados");
 
@@ -446,9 +469,21 @@ const liveConnectionWarning =
     "live-connection-warning"
   );
 
+const liveLoadingOverlay =
+  document.getElementById(
+    "live-loading-overlay"
+  );
+
 
 let lastLivePayload = null;
 let changedLiveRows = new Set();
+let liveRequestInFlight = false;
+const activeLiveFilters = {
+  qualifying: "all",
+  finals: "all"
+};
+const liveGroupOpenState = new Map();
+let lastLiveFocusSignature = "";
 
 
 /* =========================================================
@@ -468,13 +503,36 @@ async function loadCompetition2026() {
     return;
   }
 
+  /*
+    Evita peticiones superpuestas si Google Apps Script tarda más
+    que el intervalo de actualización.
+  */
+  if (liveRequestInFlight) {
+    return;
+  }
+
+  liveRequestInFlight = true;
+
+  if (!lastLivePayload) {
+    setLiveConnectionState("connecting");
+  }
+
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(
+    () => timeoutController.abort(),
+    25000
+  );
+
   try {
     const response = await fetch(
       `${CCYT_API_URL}?_=${Date.now()}`,
       {
-        cache: "no-store"
+        cache: "no-store",
+        signal: timeoutController.signal
       }
     );
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(
@@ -494,6 +552,8 @@ async function loadCompetition2026() {
     if (liveConnectionWarning) {
       liveConnectionWarning.hidden = true;
     }
+
+    setLiveConnectionState("connected");
 
     const isFirstLoad =
       lastLivePayload === null;
@@ -526,6 +586,22 @@ async function loadCompetition2026() {
 
     if (liveConnectionWarning) {
       liveConnectionWarning.hidden = false;
+    }
+
+    setLiveConnectionState("reconnecting");
+
+  } finally {
+    clearTimeout(timeoutId);
+    liveRequestInFlight = false;
+
+    /*
+      Pase lo que pase en el primer intento (éxito o error), el
+      overlay de "Cargando..." se quita apenas termina esa primera
+      petición. Así nunca se queda trabado a pantalla completa: si
+      falla, el aviso de "no se pudo actualizar" toma el relevo.
+    */
+    if (liveLoadingOverlay) {
+      liveLoadingOverlay.hidden = true;
     }
   }
 }
@@ -568,32 +644,93 @@ function renderCompetition2026(payload) {
   const estado =
     payload.estado || {};
 
+  const liveFocus =
+    resolveLiveCompetitionFocus(payload);
+
+  syncLiveCompetitionFocus(liveFocus);
+
   renderContestLiveStatus(estado);
 
   renderQualifyingCompetition(
     payload,
-    config
+    config,
+    liveFocus
   );
 
   renderOtherResults(
     payload,
-    config
+    config,
+    liveFocus
   );
 
   renderClassifiedCompetition(
     payload
   );
+
+  updateContestLiveJump();
+}
+
+function updateContestLiveJump() {
+  if (!contestLiveJump) {
+    return;
+  }
+
+  const currentGroup =
+    document.querySelector(
+      "details.live-current-group"
+    );
+
+  contestLiveJump.hidden = !currentGroup;
+
+  if (!currentGroup) {
+    contestLiveJump.onclick = null;
+    return;
+  }
+
+  contestLiveJump.onclick = () => {
+    const container = currentGroup.closest(
+      "#groups-2026, #live-results-container"
+    );
+
+    const showAllButton =
+      container?.querySelector(
+        '[data-live-filter="all"]'
+      );
+
+    if (
+      showAllButton &&
+      showAllButton.getAttribute(
+        "aria-pressed"
+      ) !== "true"
+    ) {
+      showAllButton.click();
+    }
+
+    currentGroup.open = true;
+
+    liveGroupOpenState.set(
+      currentGroup.dataset.liveGroupKey,
+      true
+    );
+
+    currentGroup.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  };
 }
 
 function renderQualifyingCompetition(
   payload,
-  config
+  config,
+  liveFocus
 ) {
   if (!groups2026) {
     return;
   }
 
   const sections = [];
+  const availableCategories = [];
 
 
   /* ==========================================
@@ -601,15 +738,16 @@ function renderQualifyingCompetition(
   ========================================== */
 
   if (
-    normalizeLiveValue(
+    isLiveAffirmative(
       config.mostrar_general
-    ) === "SI"
+    )
   ) {
     const generalRows =
       (payload.general || []).filter(
         row =>
           normalizeLiveValue(row.fase) ===
-          "CLASIFICATORIA"
+            "CLASIFICATORIA" &&
+          hasLiveParticipant(row)
       );
 
     const generalGroups =
@@ -621,8 +759,10 @@ function renderQualifyingCompetition(
     if (
       Object.keys(generalGroups).length
     ) {
+      availableCategories.push("general");
+
       sections.push(`
-        <div class="qualifying-category-title">
+        <div class="qualifying-category-title qualifying-category-general" data-live-category="general">
           <span>Danzas Nacionales</span>
           <h3>Grupos clasificatorios</h3>
         </div>
@@ -633,7 +773,7 @@ function renderQualifyingCompetition(
           a.localeCompare(b)
         )
         .forEach(
-          ([groupName, rows]) => {
+          ([groupName, rows], index) => {
             sections.push(
               createScoreTable({
                 title:
@@ -641,7 +781,9 @@ function renderQualifyingCompetition(
                 rows,
                 showDance: true,
                 showClassification: true,
-                category: "general"
+                category: "general",
+                phase: "qualifying",
+                liveFocus
               })
             );
           }
@@ -655,15 +797,16 @@ function renderQualifyingCompetition(
   ========================================== */
 
   if (
-    normalizeLiveValue(
+    isLiveAffirmative(
       config.mostrar_caporales
-    ) === "SI"
+    )
   ) {
     const caporalesRows =
       (payload.caporales || []).filter(
         row =>
           normalizeLiveValue(row.fase) ===
-          "CLASIFICATORIA"
+            "CLASIFICATORIA" &&
+          hasLiveParticipant(row)
       );
 
     const caporalesGroups =
@@ -675,11 +818,13 @@ function renderQualifyingCompetition(
     if (
       Object.keys(caporalesGroups).length
     ) {
+      availableCategories.push("caporales");
+
       sections.push(`
         <div class="
           qualifying-category-title
           qualifying-category-caporales
-        ">
+        " data-live-category="caporales">
           <span>Caporales</span>
           <h3>Grupos clasificatorios</h3>
         </div>
@@ -690,7 +835,7 @@ function renderQualifyingCompetition(
           a.localeCompare(b)
         )
         .forEach(
-          ([groupName, rows]) => {
+          ([groupName, rows], index) => {
             sections.push(
               createScoreTable({
                 title:
@@ -698,7 +843,9 @@ function renderQualifyingCompetition(
                 rows,
                 showDance: false,
                 showClassification: true,
-                category: "caporales"
+                category: "caporales",
+                phase: "qualifying",
+                liveFocus
               })
             );
           }
@@ -736,7 +883,17 @@ function renderQualifyingCompetition(
 
 
   groups2026.innerHTML =
-    sections.join("");
+    createLiveCategoryFilters(
+      availableCategories,
+      "qualifying"
+    ) + sections.join("");
+
+  setupLiveCategoryFilters(
+    groups2026,
+    "qualifying"
+  );
+
+  setupLiveGroupToggles(groups2026);
 }
 
 function createScoreTable(options) {
@@ -745,7 +902,9 @@ function createScoreTable(options) {
     rows,
     showDance,
     showClassification,
-    category = ""
+    category = "",
+    phase = "qualifying",
+    liveFocus = null
   } = options;
 
   const sortedRows = [...rows].sort(
@@ -756,6 +915,25 @@ function createScoreTable(options) {
 
   const jurors =
     getVisibleJurors(sortedRows);
+
+  const groupKey = [
+    phase,
+    category,
+    normalizeLiveValue(title)
+  ].join("|");
+
+  const isCurrentGroup =
+    isLiveCompetitionGroupCurrent(
+      liveFocus,
+      phase,
+      category,
+      title
+    );
+
+  const shouldExpand =
+    liveGroupOpenState.has(groupKey)
+      ? liveGroupOpenState.get(groupKey)
+      : isCurrentGroup;
 
   const jurorHeaders =
     jurors
@@ -779,19 +957,32 @@ function createScoreTable(options) {
       .join("");
 
   return `
-    <div class="group-block live-group-block">
+    <details
+      class="group-block live-group-block live-category-${category} live-phase-${phase}${isCurrentGroup ? " live-current-group" : ""}"
+      data-live-category="${category}"
+      data-live-group-key="${escapeLiveHtml(groupKey)}"
+      ${shouldExpand ? "open" : ""}
+    >
 
-      <div class="live-table-heading">
+      <summary class="live-table-heading">
         <h3>${escapeLiveHtml(title)}</h3>
 
-        <span>
-          Actualización automática
+        <span class="live-table-meta">
+          ${isCurrentGroup
+      ? "En curso ahora"
+      : "Actualización automática"
+    }
         </span>
-      </div>
+
+        <span class="live-table-toggle" aria-hidden="true">
+          <span class="live-table-toggle-label"></span>
+          <span class="live-table-toggle-icon"></span>
+        </span>
+      </summary>
 
       <div class="scores-table-wrapper">
 
-        <table class="scores-table live-scores-table">
+        <table class="scores-table live-scores-table live-jurors-${jurors.length}">
 
           <thead>
             <tr>
@@ -817,8 +1008,125 @@ function createScoreTable(options) {
 
       </div>
 
+    </details>
+  `;
+}
+
+function createLiveCategoryFilters(
+  categories,
+  scope
+) {
+  if (categories.length <= 1) {
+    activeLiveFilters[scope] = "all";
+    return "";
+  }
+
+  const labels = {
+    general: "Danzas",
+    caporales: "Caporales",
+    infantil: "Infantil",
+    campeones: "Campeones"
+  };
+
+  const activeCategory =
+    categories.includes(activeLiveFilters[scope])
+      ? activeLiveFilters[scope]
+      : "all";
+
+  activeLiveFilters[scope] = activeCategory;
+
+  return `
+    <div class="live-category-filters" data-live-filter-scope="${scope}" role="group" aria-label="Filtrar categorías">
+      <button type="button" data-live-filter="all" aria-pressed="${activeCategory === "all"}">
+        Todas
+      </button>
+
+      ${categories.map(category => `
+        <button
+          type="button"
+          data-live-filter="${category}"
+          aria-pressed="${activeCategory === category}"
+        >
+          ${labels[category] || category}
+        </button>
+      `).join("")}
     </div>
   `;
+}
+
+function setupLiveCategoryFilters(
+  container,
+  scope
+) {
+  const filterBar =
+    container.querySelector(
+      `[data-live-filter-scope="${scope}"]`
+    );
+
+  if (!filterBar) {
+    return;
+  }
+
+  const applyFilter = category => {
+    activeLiveFilters[scope] = category;
+
+    filterBar
+      .querySelectorAll("[data-live-filter]")
+      .forEach(button => {
+        button.setAttribute(
+          "aria-pressed",
+          String(
+            button.dataset.liveFilter === category
+          )
+        );
+      });
+
+    container
+      .querySelectorAll("[data-live-category]")
+      .forEach(element => {
+        element.hidden =
+          category !== "all" &&
+          element.dataset.liveCategory !== category;
+      });
+  };
+
+  filterBar.addEventListener(
+    "click",
+    event => {
+      const button =
+        event.target.closest(
+          "[data-live-filter]"
+        );
+
+      if (!button) {
+        return;
+      }
+
+      applyFilter(
+        button.dataset.liveFilter
+      );
+    }
+  );
+
+  applyFilter(activeLiveFilters[scope]);
+}
+
+function setupLiveGroupToggles(container) {
+  container
+    .querySelectorAll(
+      "details[data-live-group-key]"
+    )
+    .forEach(details => {
+      details.addEventListener(
+        "toggle",
+        () => {
+          liveGroupOpenState.set(
+            details.dataset.liveGroupKey,
+            details.open
+          );
+        }
+      );
+    });
 }
 
 function createScoreRow(
@@ -829,21 +1137,23 @@ function createScoreRow(
   category
 ) {
   const published =
-    normalizeLiveValue(row.publicar) ===
-    "SI";
+    isLiveRowPublished(row);
+
+  const evaluating =
+    isLiveRowEvaluating(row);
 
   const disqualified =
     published &&
-    normalizeLiveValue(
+    isLiveAffirmative(
       row.descalificado
-    ) === "SI";
+    );
 
   const classified =
     published &&
     showClassification &&
-    normalizeLiveValue(
+    isLiveAffirmative(
       row.clasificado
-    ) === "SI";
+    );
 
   let rowClass = "";
 
@@ -851,17 +1161,25 @@ function createScoreRow(
     rowClass = "live-disqualified-row";
   } else if (classified) {
     rowClass = "classified-row";
+  } else if (evaluating) {
+    rowClass = "live-evaluating-row";
   }
 
   const jurorCells =
     jurors
       .map(juror => {
+        const jurorLabel = juror.toUpperCase();
+
         if (!published) {
-          return `<td class="score-pending">—</td>`;
+          return `
+            <td class="live-score-cell score-pending" data-label="${jurorLabel}">
+              —
+            </td>
+          `;
         }
 
         return `
-          <td>
+          <td class="live-score-cell" data-label="${jurorLabel}">
             ${escapeLiveHtml(
           row[juror] || "—"
         )}
@@ -870,28 +1188,47 @@ function createScoreRow(
       })
       .join("");
 
+  const rowKey =
+    getLiveRowKey(
+      category,
+      row
+    );
+
+  const rowUpdated =
+    changedLiveRows.has(rowKey);
+
+  if (rowUpdated) {
+    rowClass += " live-row-updated";
+  }
+
+  const changeIndicator = rowUpdated
+    ? `
+        <span class="live-score-change" title="Puntaje actualizado" aria-label="Puntaje actualizado">
+          ↑
+        </span>
+      `
+    : "";
+
   let resultCell;
 
   if (!published) {
-    const state =
-      normalizeLiveValue(row.estado);
-
     resultCell = `
-      <td>
-        <span class="live-result-state ${state === "EN_EVALUACION"
+      <td class="live-total-cell" data-label="Total">
+        <span class="live-result-state ${evaluating
         ? "is-evaluating"
         : ""
       }">
-          ${state === "EN_EVALUACION"
+          ${evaluating
         ? "En evaluación"
         : "Pendiente"
       }
         </span>
+        ${changeIndicator}
       </td>
     `;
   } else if (disqualified) {
     resultCell = `
-      <td>
+      <td class="live-total-cell" data-label="Total">
         <span class="live-disqualified">
           Descalificado
         </span>
@@ -906,11 +1243,12 @@ function createScoreRow(
             `
         : ""
       }
+        ${changeIndicator}
       </td>
     `;
   } else {
     resultCell = `
-      <td>
+      <td class="live-total-cell" data-label="Total">
         <strong class="live-total">
           ${escapeLiveHtml(
       row.total || "—"
@@ -936,42 +1274,49 @@ function createScoreRow(
             `
         : ""
       }
+        ${changeIndicator}
       </td>
     `;
   }
 
-  const rowKey =
-    getLiveRowKey(
-      category,
-      row
-    );
-
-  if (
-    changedLiveRows.has(rowKey)
-  ) {
-    rowClass +=
-      " live-row-updated";
-  }
-
   return `
     <tr class="${rowClass}">
-      <td>
+      <td class="live-order-cell" data-label="Orden">
         ${escapeLiveHtml(
     row.orden || "—"
   )}
       </td>
 
-      <td>
+      <td class="live-group-cell" data-label="Agrupación">
         <strong>
           ${escapeLiveHtml(
     row.agrupacion || ""
-  )}
+        )}
         </strong>
+
+        ${showDance && row.danza
+      ? `
+            <span class="live-mobile-dance">
+              ${escapeLiveHtml(row.danza)}
+            </span>
+          `
+      : ""
+    }
+
+        ${evaluating
+      ? `
+            <small class="live-current-badge">
+              <i></i>
+              Compitiendo ahora
+            </small>
+          `
+      : ""
+    }
       </td>
 
       ${showDance
       ? `
-            <td>
+            <td class="live-dance-cell" data-label="Danza">
               ${escapeLiveHtml(
         row.danza || ""
       )}
@@ -999,9 +1344,7 @@ function getVisibleJurors(rows) {
   return jurors.filter(juror =>
     rows.some(row => {
       return (
-        normalizeLiveValue(
-          row.publicar
-        ) === "SI" &&
+        isLiveRowPublished(row) &&
         String(row[juror] || "").trim() !== ""
       );
     })
@@ -1023,12 +1366,10 @@ function renderClassifiedCompetition(
       .filter(row =>
         normalizeLiveValue(row.fase) ===
           "CLASIFICATORIA" &&
-        normalizeLiveValue(row.publicar) ===
-          "SI" &&
-        normalizeLiveValue(row.clasificado) ===
-          "SI" &&
-        normalizeLiveValue(row.descalificado) !==
-          "SI"
+        hasLiveParticipant(row) &&
+        isLiveRowPublished(row) &&
+        isLiveAffirmative(row.clasificado) &&
+        !isLiveAffirmative(row.descalificado)
       );
 
   const caporales =
@@ -1036,12 +1377,10 @@ function renderClassifiedCompetition(
       .filter(row =>
         normalizeLiveValue(row.fase) ===
           "CLASIFICATORIA" &&
-        normalizeLiveValue(row.publicar) ===
-          "SI" &&
-        normalizeLiveValue(row.clasificado) ===
-          "SI" &&
-        normalizeLiveValue(row.descalificado) !==
-          "SI"
+        hasLiveParticipant(row) &&
+        isLiveRowPublished(row) &&
+        isLiveAffirmative(row.clasificado) &&
+        !isLiveAffirmative(row.descalificado)
       );
 
 
@@ -1069,9 +1408,15 @@ function renderClassifiedCompetition(
         <div class="classified-category-heading">
           <span>Danzas Nacionales</span>
 
-          <h3>
-            Clasificados a la Gran Final
-          </h3>
+          <div class="classified-category-title-row">
+            <h3>
+              Clasificados a la Gran Final
+            </h3>
+
+            <strong class="classified-count">
+              ${general.length}
+            </strong>
+          </div>
         </div>
 
         <div class="classified-live-grid">
@@ -1088,7 +1433,7 @@ function renderClassifiedCompetition(
                 class="classified-live-card"
               >
 
-                <span>
+                <span class="classified-group-chip">
                   Grupo ${escapeLiveHtml(
                     row.grupo
                   )}
@@ -1100,13 +1445,16 @@ function renderClassifiedCompetition(
                   )}
                 </h3>
 
-                <p>
-                  ${escapeLiveHtml(
-                    row.danza || ""
-                  )}
-                </p>
+                ${row.danza
+                  ? `
+                      <p>
+                        ${escapeLiveHtml(row.danza)}
+                      </p>
+                    `
+                  : ""
+                }
 
-                <strong>
+                <strong class="classified-total">
                   ${escapeLiveHtml(
                     row.total
                   )} pts
@@ -1135,9 +1483,15 @@ function renderClassifiedCompetition(
         <div class="classified-category-heading">
           <span>Caporales</span>
 
-          <h3>
-            Clasificados a la Gran Final
-          </h3>
+          <div class="classified-category-title-row">
+            <h3>
+              Clasificados a la Gran Final
+            </h3>
+
+            <strong class="classified-count">
+              ${caporales.length}
+            </strong>
+          </div>
         </div>
 
         <div class="classified-live-grid">
@@ -1155,7 +1509,7 @@ function renderClassifiedCompetition(
                        classified-caporales-card"
               >
 
-                <span>
+                <span class="classified-group-chip">
                   Grupo ${escapeLiveHtml(
                     row.grupo
                   )}
@@ -1167,7 +1521,7 @@ function renderClassifiedCompetition(
                   )}
                 </h3>
 
-                <strong>
+                <strong class="classified-total">
                   ${escapeLiveHtml(
                     row.total
                   )} pts
@@ -1189,30 +1543,35 @@ function renderClassifiedCompetition(
 
 function renderOtherResults(
   payload,
-  config
+  config,
+  liveFocus
 ) {
   if (!liveResultsContainer) {
     return;
   }
 
   const sections = [];
+  const availableCategories = [];
 
   /*
     FINAL GENERAL
   */
   if (
-    normalizeLiveValue(
+    isLiveAffirmative(
       config.mostrar_final_general
-    ) === "SI"
+    )
   ) {
     const finalGeneral =
       (payload.general || []).filter(
         row =>
           normalizeLiveValue(row.fase) ===
-          "FINAL"
+            "FINAL" &&
+          hasLiveParticipant(row)
       );
 
     if (finalGeneral.length) {
+      availableCategories.push("general");
+
       sections.push(
         createScoreTable({
           title:
@@ -1220,7 +1579,9 @@ function renderOtherResults(
           rows: finalGeneral,
           showDance: true,
           showClassification: false,
-          category: "general"
+          category: "general",
+          phase: "final",
+          liveFocus
         })
       );
     }
@@ -1231,14 +1592,17 @@ function renderOtherResults(
     INFANTIL
   */
   if (
-    normalizeLiveValue(
+    isLiveAffirmative(
       config.mostrar_infantil
-    ) === "SI"
+    )
   ) {
     const infantil =
-      payload.infantil || [];
+      (payload.infantil || [])
+        .filter(hasLiveParticipant);
 
     if (infantil.length) {
+      availableCategories.push("infantil");
+
       sections.push(
         createScoreTable({
           title:
@@ -1246,7 +1610,9 @@ function renderOtherResults(
           rows: infantil,
           showDance: true,
           showClassification: false,
-          category: "infantil"
+          category: "infantil",
+          phase: "final",
+          liveFocus
         })
       );
     }
@@ -1257,18 +1623,21 @@ function renderOtherResults(
     FINAL CAPORALES
   */
   if (
-    normalizeLiveValue(
+    isLiveAffirmative(
       config.mostrar_final_caporales
-    ) === "SI"
+    )
   ) {
     const finalCaporales =
       (payload.caporales || []).filter(
         row =>
           normalizeLiveValue(row.fase) ===
-          "FINAL"
+            "FINAL" &&
+          hasLiveParticipant(row)
       );
 
     if (finalCaporales.length) {
+      availableCategories.push("caporales");
+
       sections.push(
         createScoreTable({
           title:
@@ -1276,7 +1645,9 @@ function renderOtherResults(
           rows: finalCaporales,
           showDance: false,
           showClassification: false,
-          category: "caporales"
+          category: "caporales",
+          phase: "final",
+          liveFocus
         })
       );
     }
@@ -1287,14 +1658,17 @@ function renderOtherResults(
     CAMPEÓN DE CAMPEONES
   */
   if (
-    normalizeLiveValue(
+    isLiveAffirmative(
       config.mostrar_campeones
-    ) === "SI"
+    )
   ) {
     const campeones =
-      payload.campeones || [];
+      (payload.campeones || [])
+        .filter(hasLiveParticipant);
 
     if (campeones.length) {
+      availableCategories.push("campeones");
+
       sections.push(
         createScoreTable({
           title:
@@ -1302,7 +1676,9 @@ function renderOtherResults(
           rows: campeones,
           showDance: true,
           showClassification: false,
-          category: "campeones"
+          category: "campeones",
+          phase: "final",
+          liveFocus
         })
       );
     }
@@ -1310,42 +1686,59 @@ function renderOtherResults(
 
 
   if (!sections.length) {
-    renderResultsWaiting();
+    liveResultsContainer.innerHTML = "";
+
+    if (liveResultsSection) {
+      liveResultsSection.hidden = true;
+    }
+
+    if (liveResultsNavLink) {
+      liveResultsNavLink.hidden = true;
+    }
+
     return;
   }
 
   liveResultsContainer.innerHTML =
-    sections.join("");
+    createLiveCategoryFilters(
+      availableCategories,
+      "finals"
+    ) + sections.join("");
+
+  setupLiveCategoryFilters(
+    liveResultsContainer,
+    "finals"
+  );
+
+  setupLiveGroupToggles(
+    liveResultsContainer
+  );
+
+  if (liveResultsSection) {
+    liveResultsSection.hidden = false;
+  }
+
+  if (liveResultsNavLink) {
+    liveResultsNavLink.hidden = false;
+  }
 }
 
-function renderResultsWaiting() {
-  liveResultsContainer.innerHTML = `
-    <div class="results-waiting">
+function setLiveConnectionState(state) {
+  if (!liveConnectionState) {
+    return;
+  }
 
-      <div class="results-waiting-icon">
-        🏆
-      </div>
+  const labels = {
+    connecting: "Conectando",
+    connected: "Conectado",
+    reconnecting: "Reconectando"
+  };
 
-      <span class="results-waiting-status">
-        Aún no disponible
-      </span>
+  liveConnectionState.textContent =
+    labels[state] || labels.connecting;
 
-      <h3>
-        Resultados próximamente
-      </h3>
-
-      <p>
-        Los puntajes se publicarán aquí
-        durante el desarrollo del concurso.
-      </p>
-
-      <div class="results-waiting-live">
-        <i></i>
-        Actualización en vivo durante el concurso
-      </div>
-
-    </div>
-  `;
+  liveConnectionState.className =
+    `live-connection-state is-${state}`;
 }
 
 function groupRowsBy(rows, property) {
@@ -1375,7 +1768,168 @@ function groupRowsBy(rows, property) {
 function normalizeLiveValue(value) {
   return String(value || "")
     .trim()
-    .toUpperCase();
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+}
+
+function hasLiveParticipant(row) {
+  return Boolean(
+    String(row?.agrupacion || "").trim()
+  );
+}
+
+function resolveLiveCompetitionFocus(payload) {
+  const status = payload.estado || {};
+  const stage = normalizeLiveValue(status.etapa);
+  const detail = normalizeLiveValue(status.detalle);
+
+  let category = "";
+
+  if (stage.includes("CAPORAL")) {
+    category = "caporales";
+  } else if (stage.includes("INFANTIL")) {
+    category = "infantil";
+  } else if (stage.includes("CAMPEON")) {
+    category = "campeones";
+  } else if (
+    stage.includes("DANZA") ||
+    stage.includes("NACIONAL")
+  ) {
+    category = "general";
+  }
+
+  let phase = "";
+
+  if (stage.includes("CLASIFICATORIA")) {
+    phase = "qualifying";
+  } else if (
+    stage.includes("FINAL") ||
+    category === "infantil" ||
+    category === "campeones"
+  ) {
+    phase = "final";
+  }
+
+  if (category && phase) {
+    return {
+      category,
+      phase,
+      detail,
+      source: "status"
+    };
+  }
+
+  const collections = [
+    ["general", payload.general || []],
+    ["caporales", payload.caporales || []],
+    ["infantil", payload.infantil || []],
+    ["campeones", payload.campeones || []]
+  ];
+
+  for (const [fallbackCategory, rows] of collections) {
+    const evaluatingRow = rows.find(
+      row =>
+        hasLiveParticipant(row) &&
+        isLiveRowEvaluating(row)
+    );
+
+    if (!evaluatingRow) {
+      continue;
+    }
+
+    const fallbackPhase =
+      fallbackCategory === "general" ||
+      fallbackCategory === "caporales"
+        ? normalizeLiveValue(evaluatingRow.fase) === "FINAL"
+          ? "final"
+          : "qualifying"
+        : "final";
+
+    return {
+      category: fallbackCategory,
+      phase: fallbackPhase,
+      detail:
+        fallbackPhase === "qualifying"
+          ? normalizeLiveValue(
+              `Grupo ${evaluatingRow.grupo || ""}`
+            )
+          : "",
+      source: "row"
+    };
+  }
+
+  return null;
+}
+
+function syncLiveCompetitionFocus(liveFocus) {
+  const signature = liveFocus
+    ? [
+        liveFocus.phase,
+        liveFocus.category,
+        liveFocus.detail
+      ].join("|")
+    : "";
+
+  if (signature === lastLiveFocusSignature) {
+    return;
+  }
+
+  liveGroupOpenState.clear();
+  lastLiveFocusSignature = signature;
+}
+
+function isLiveCompetitionGroupCurrent(
+  liveFocus,
+  phase,
+  category,
+  title
+) {
+  if (
+    !liveFocus ||
+    liveFocus.phase !== phase ||
+    liveFocus.category !== category
+  ) {
+    return false;
+  }
+
+  if (phase === "final") {
+    return true;
+  }
+
+  const normalizedTitle =
+    normalizeLiveValue(title);
+
+  return Boolean(
+    liveFocus.detail &&
+    (
+      normalizedTitle === liveFocus.detail ||
+      normalizedTitle.includes(liveFocus.detail) ||
+      liveFocus.detail.includes(normalizedTitle)
+    )
+  );
+}
+
+function isLiveRowPublished(row) {
+  return (
+    isLiveAffirmative(row.publicar) ||
+    normalizeLiveValue(row.estado) === "PUBLICADO"
+  );
+}
+
+function isLiveAffirmative(value) {
+  return ["SI", "TRUE", "1", "X"].includes(
+    normalizeLiveValue(value)
+  );
+}
+
+function isLiveRowEvaluating(row) {
+  return (
+    !isLiveRowPublished(row) &&
+    normalizeLiveValue(row.estado) ===
+      "EN_EVALUACION"
+  );
 }
 
 
@@ -1484,6 +2038,13 @@ let liveCompetitionInterval = null;
 const LIVE_RESULTS_START =
   new Date("2026-10-25T11:00:00-05:00");
 
+const LIVE_RESULTS_REFRESH_MS = 15000;
+
+if (liveRefreshSeconds) {
+  liveRefreshSeconds.textContent =
+    String(LIVE_RESULTS_REFRESH_MS / 1000);
+}
+
 
 function startLiveCompetitionUpdates() {
   if (
@@ -1502,21 +2063,35 @@ function startLiveCompetitionUpdates() {
   }
 
   /*
+    El overlay solo aparece cuando el modo concurso está activo:
+    desde la fecha programada o mediante ?preview=concurso2026.
+  */
+  if (liveLoadingOverlay) {
+    liveLoadingOverlay.hidden = false;
+  }
+
+  /*
     Primera carga inmediata.
   */
   loadCompetition2026();
 
   /*
-    Luego actualizamos cada 10 segundos.
+    Luego actualizamos cada 15 segundos. Es suficientemente rápido
+    para el seguimiento en vivo y reduce la carga cuando hay muchas
+    personas conectadas al mismo tiempo.
   */
   liveCompetitionInterval = setInterval(
     loadCompetition2026,
-    10000
+    LIVE_RESULTS_REFRESH_MS
   );
 }
 
 
 function stopLiveCompetitionUpdates() {
+  if (liveLoadingOverlay) {
+    liveLoadingOverlay.hidden = true;
+  }
+
   if (!liveCompetitionInterval) {
     return;
   }
@@ -1590,6 +2165,11 @@ function updateCompetitionPageMode() {
     now >= LIVE_MODE_START ||
     testLiveMode;
 
+  document.body.classList.toggle(
+    "competition-live-mode",
+    isLiveMode
+  );
+
   /*
     SECCIONES PREVIAS
   */
@@ -1625,7 +2205,8 @@ function updateCompetitionPageMode() {
         por eso no lo mostramos a la fuerza.
       */
       if (
-        section.id === "clasificados"
+        section.id === "clasificados" ||
+        section.id === "resultados"
       ) {
         if (!isLiveMode) {
           section.hidden = true;

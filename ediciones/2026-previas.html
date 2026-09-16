@@ -229,6 +229,41 @@
 
         </nav>
 
+        <div class="live-loading-overlay" id="live-loading-overlay" role="status" aria-live="polite" hidden
+            aria-labelledby="live-loading-title" aria-describedby="live-loading-description">
+            <span class="live-loading-glow live-loading-glow-one" aria-hidden="true"></span>
+            <span class="live-loading-glow live-loading-glow-two" aria-hidden="true"></span>
+
+            <div class="live-loading-content">
+                <img src="../img/logo.png" alt="Catacaos, Color y Tradición" class="live-loading-logo">
+
+                <span class="live-loading-kicker">
+                    <i aria-hidden="true"></i>
+                    Resultados en vivo
+                </span>
+
+                <h2 id="live-loading-title">Preparando la información</h2>
+                <p id="live-loading-description">
+                    Estamos conectando con los resultados más recientes del concurso.
+                </p>
+
+                <div class="live-loading-progress" aria-hidden="true">
+                    <span></span>
+                </div>
+
+                <div class="live-loading-patience">
+                    <span class="live-loading-patience-icon" aria-hidden="true">⌛</span>
+                    <div>
+                        <strong>Gracias por tu paciencia</strong>
+                        <small>
+                            Si muchas personas están ingresando al mismo tiempo,
+                            la carga puede tardar unos segundos más.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="live-connection-warning" id="live-connection-warning" hidden>
             <span>⚠</span>
 
@@ -1491,17 +1526,32 @@
                 Clasificados
             </a>
 
-            <a href="#resultados">
+            <a href="#resultados" id="live-results-nav-link" hidden>
                 Resultados
             </a>
 
-            <a href="#jurado">
-                Jurado
-            </a>
         </nav>
 
         <!-- SEGUIMIENTO EN VIVO -->
         <section class="contest-live-section live-event-section" id="seguimiento-en-vivo">
+
+            <div class="live-refresh-notice">
+                <span class="live-refresh-icon" aria-hidden="true">↻</span>
+
+                <div>
+                    <div class="live-refresh-heading">
+                        <strong>Actualización automática</strong>
+                        <span class="live-connection-state is-connecting" id="live-connection-state">
+                            Conectando
+                        </span>
+                    </div>
+                    <small>
+                        Los puntajes se actualizan cada
+                        <span id="live-refresh-seconds">15</span> segundos.
+                        No necesitas recargar la página.
+                    </small>
+                </div>
+            </div>
 
             <div class="live-global-update" id="live-global-update" hidden>
                 <span class="live-global-dot"></span>
@@ -1536,6 +1586,11 @@
                     </h3>
 
                     <strong id="contest-live-detail"></strong>
+
+                    <button class="contest-live-jump" id="contest-live-jump" type="button" hidden>
+                        <span aria-hidden="true">↓</span>
+                        Ir a la competencia actual
+                    </button>
 
                 </div>
 
@@ -1586,25 +1641,42 @@
         <!-- CLASIFICADOS -->
         <section class="classified-section live-event-section" id="clasificados" hidden>
 
-            <div class="section-heading">
+            <details class="classified-disclosure" open>
 
-                <span class="section-kicker">
-                    Gran Final
-                </span>
+                <summary class="classified-disclosure-summary">
 
-                <h2>
-                    Clasificados
-                </h2>
+                    <div class="section-heading">
 
-            </div>
+                        <span class="section-kicker">
+                            Gran Final
+                        </span>
 
-            <div id="classified-2026"></div>
+                        <h2>
+                            Clasificados
+                        </h2>
+
+                        <p>
+                            Agrupaciones que avanzan a las etapas finales.
+                        </p>
+
+                    </div>
+
+                    <span class="live-table-toggle classified-toggle-control" aria-hidden="true">
+                        <span class="live-table-toggle-label"></span>
+                        <span class="live-table-toggle-icon"></span>
+                    </span>
+
+                </summary>
+
+                <div id="classified-2026"></div>
+
+            </details>
 
         </section>
 
 
         <!-- FINALES -->
-        <section class="live-results-section live-event-section" id="resultados">
+        <section class="live-results-section live-event-section" id="resultados" hidden>
 
             <div class="section-heading">
 
@@ -1624,62 +1696,7 @@
             </div>
 
 
-            <div id="live-results-container">
-
-                <div class="results-waiting">
-
-                    <div class="results-waiting-icon">
-                        🏆
-                    </div>
-
-                    <span class="results-waiting-status">
-                        Aún no disponible
-                    </span>
-
-                    <h3>
-                        Resultados próximamente
-                    </h3>
-
-                    <p>
-                        Los puntajes se publicarán aquí durante
-                        el desarrollo del concurso.
-                    </p>
-
-                    <div class="results-waiting-live">
-                        <i></i>
-                        Actualización en vivo durante el concurso
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- JURADO -->
-        <section class="jury-section live-event-section" id="jurado">
-
-            <div class="section-heading">
-
-                <span class="section-kicker">
-                    Evaluación
-                </span>
-
-                <h2>
-                    Jurado Calificador
-                </h2>
-
-                <p>
-                    Los integrantes del jurado serán
-                    anunciados próximamente.
-                </p>
-
-            </div>
-
-            <div class="jury-grid" id="jury-2026">
-            </div>
+            <div id="live-results-container"></div>
 
         </section>
 

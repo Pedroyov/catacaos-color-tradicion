@@ -282,7 +282,7 @@
     container.replaceChildren();
     [
       [entries.length, 'agrupaciones con podios'],
-      [champions, champions === 1 ? 'campeón histórico' : 'campeones históricos'],
+      [champions, champions === 1 ? 'campeón' : 'campeones'],
       [podiums, podiums === 1 ? 'podio registrado' : 'podios registrados'],
       [latestYear || '—', 'edición más reciente']
     ].forEach(function (item) {
