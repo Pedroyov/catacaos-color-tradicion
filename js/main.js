@@ -381,7 +381,6 @@ const contestLiveJump =
     "contest-live-jump"
   );
 
-
 function renderContestLiveStatus(data) {
   if (!contestLivePanel) {
     return;
@@ -720,6 +719,801 @@ function updateContestLiveJump() {
   };
 }
 
+async function shareLiveGroupImage(
+  groupDetails,
+  shareButton
+) {
+  if (
+    !groupDetails ||
+    !shareButton
+  ) {
+    return;
+  }
+
+  const originalButtonHtml =
+    shareButton.innerHTML;
+
+  shareButton.disabled = true;
+  shareButton.innerHTML =
+    "<span aria-hidden=\"true\">…</span><b>Preparando</b>";
+
+  try {
+    const exportData =
+      getLiveGroupExportData(
+        groupDetails
+      );
+
+    const canvas =
+      createLiveGroupCanvas(
+        exportData
+      );
+
+    const imageBlob =
+      await new Promise(
+        (resolve, reject) => {
+          canvas.toBlob(
+            blob => {
+              if (blob) {
+                resolve(blob);
+                return;
+              }
+
+              reject(
+                new Error(
+                  "El navegador no pudo crear el archivo PNG"
+                )
+              );
+            },
+            "image/png"
+          );
+        }
+      );
+
+    const fileName =
+      `${createLiveExportFileName(
+        exportData
+      )}.png`;
+
+    const imageFile =
+      typeof File === "function"
+        ? new File(
+            [imageBlob],
+            fileName,
+            { type: "image/png" }
+          )
+        : null;
+
+    const canShareFile =
+      imageFile &&
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare({
+        files: [imageFile]
+      });
+
+    if (canShareFile) {
+      await navigator.share({
+        files: [imageFile],
+        title: `${exportData.categoryName} · ${exportData.title}`,
+        text: "Resultados actuales de Catacaos, Color y Tradición 2026"
+      });
+
+      shareButton.innerHTML =
+        "<span aria-hidden=\"true\">✓</span><b>Compartida</b>";
+    } else {
+      downloadLiveImageFile(
+        imageBlob,
+        fileName
+      );
+
+      shareButton.innerHTML =
+        "<span aria-hidden=\"true\">↓</span><b>Descargada</b>";
+    }
+  } catch (error) {
+    if (error?.name === "AbortError") {
+      shareButton.innerHTML =
+        originalButtonHtml;
+      shareButton.disabled = false;
+      return;
+    }
+
+    console.error(
+      "No se pudo compartir la imagen del grupo o final:",
+      error
+    );
+
+    shareButton.innerHTML =
+      "<span aria-hidden=\"true\">!</span><b>Error</b>";
+  }
+
+  window.setTimeout(() => {
+    shareButton.disabled = false;
+    shareButton.innerHTML =
+      originalButtonHtml;
+  }, 1800);
+}
+
+function downloadLiveImageFile(
+  imageBlob,
+  fileName
+) {
+  const imageUrl =
+    URL.createObjectURL(imageBlob);
+
+  const downloadLink =
+    document.createElement("a");
+
+  downloadLink.download = fileName;
+  downloadLink.href = imageUrl;
+
+  document.body.appendChild(
+    downloadLink
+  );
+
+  downloadLink.click();
+  downloadLink.remove();
+
+  window.setTimeout(
+    () => URL.revokeObjectURL(imageUrl),
+    1000
+  );
+}
+
+function getLiveGroupExportData(
+  currentGroup
+) {
+  const categoryNames = {
+    general: "Danzas Nacionales",
+    caporales: "Caporales",
+    infantil: "Infantil",
+    campeones: "Campeón de Campeones"
+  };
+
+  const themes = {
+    general: {
+      primary: "#0b6d7c",
+      soft: "#eaf6f7"
+    },
+    caporales: {
+      primary: "#9f2629",
+      soft: "#fff0f0"
+    },
+    infantil: {
+      primary: "#a97f00",
+      soft: "#fff7d5"
+    },
+    campeones: {
+      primary: "#6f4aa8",
+      soft: "#f2ecfa"
+    }
+  };
+
+  const category =
+    [
+      "general",
+      "caporales",
+      "infantil",
+      "campeones"
+    ].find(name =>
+      currentGroup.classList.contains(
+        `live-category-${name}`
+      )
+    ) || "general";
+
+  const rows = [
+    ...currentGroup.querySelectorAll(
+      ".live-scores-table tbody tr"
+    )
+  ].map(row => {
+    const scoreCells = [
+      ...row.querySelectorAll(
+        ".live-score-cell"
+      )
+    ];
+
+    const total =
+      row.querySelector(
+        ".live-total"
+      )?.textContent.trim() || "";
+
+    const state =
+      row.querySelector(
+        ".live-result-state, .live-disqualified"
+      )?.textContent.trim() || "";
+
+    return {
+      order:
+        row.dataset.exportOrder ||
+        row.querySelector(
+          ".live-order-cell"
+        )?.textContent.trim() || "—",
+      group:
+        row.dataset.exportGroup ||
+        row.querySelector(
+          ".live-group-cell > strong"
+        )?.textContent.trim() || "",
+      dance:
+        row.dataset.exportDance ||
+        row.querySelector(
+          ".live-dance-cell"
+        )?.textContent.trim() || "",
+      scores: scoreCells.map(cell => ({
+        label: cell.dataset.label || "",
+        value: cell.textContent.trim() || "—"
+      })),
+      total: total || state || "Pendiente",
+      classified: Boolean(
+        row.querySelector(
+          ".live-classified"
+        )
+      ),
+      evaluating: row.classList.contains(
+        "live-evaluating-row"
+      ),
+      disqualified: row.classList.contains(
+        "live-disqualified-row"
+      )
+    };
+  });
+
+  return {
+    category,
+    categoryName:
+      categoryNames[category],
+    theme: themes[category],
+    stage:
+      currentGroup.classList.contains(
+        "live-phase-final"
+      )
+        ? "Etapa final"
+        : "Fase clasificatoria",
+    title:
+      currentGroup.querySelector(
+        ".live-table-heading h3"
+      )?.textContent.trim() ||
+      "Grupo actual",
+    rows,
+    updatedAt:
+      new Intl.DateTimeFormat(
+        "es-PE",
+        {
+          dateStyle: "long",
+          timeStyle: "short"
+        }
+      ).format(new Date())
+  };
+}
+
+function createLiveGroupCanvas(data) {
+  const scoreLabels = [
+    ...new Set(
+      data.rows.flatMap(row =>
+        row.scores.map(score =>
+          score.label
+        )
+      )
+    )
+  ];
+
+  const hasDance =
+    data.rows.some(row => row.dance);
+
+  const columns = [
+    {
+      key: "order",
+      label: "ORDEN",
+      width: 90,
+      align: "center"
+    },
+    {
+      key: "group",
+      label: "AGRUPACIÓN",
+      width: 350,
+      align: "left"
+    },
+    ...(hasDance
+      ? [{
+          key: "dance",
+          label: "DANZA",
+          width: 260,
+          align: "left"
+        }]
+      : []),
+    ...scoreLabels.map(label => ({
+      key: `score-${label}`,
+      label,
+      width: 105,
+      align: "center"
+    })),
+    {
+      key: "total",
+      label: "TOTAL",
+      width: 150,
+      align: "center"
+    }
+  ];
+
+  const tableWidth =
+    columns.reduce(
+      (sum, column) =>
+        sum + column.width,
+      0
+    );
+
+  const width = Math.max(
+    1080,
+    tableWidth + 100
+  );
+  const headerHeight = 275;
+  const tableHeaderHeight = 68;
+  const rowHeight = 112;
+  const footerHeight = 90;
+  const tableY = headerHeight + 30;
+
+  const height = Math.max(
+    650,
+    tableY +
+      tableHeaderHeight +
+      data.rows.length * rowHeight +
+      footerHeight
+  );
+
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width = width;
+  canvas.height = height;
+
+  const context =
+    canvas.getContext("2d");
+
+  context.fillStyle = "#f4f7f7";
+  context.fillRect(0, 0, width, height);
+
+  context.fillStyle = data.theme.primary;
+  context.fillRect(
+    0,
+    0,
+    width,
+    headerHeight
+  );
+
+  context.fillStyle = "rgba(255,255,255,0.14)";
+  context.beginPath();
+  context.arc(
+    width - 80,
+    45,
+    180,
+    0,
+    Math.PI * 2
+  );
+  context.fill();
+
+  context.fillStyle = "#ffffff";
+  context.font =
+    '800 25px "Montserrat", Arial, sans-serif';
+  context.fillText(
+    "CATACAOS, COLOR Y TRADICIÓN 2026",
+    60,
+    58
+  );
+
+  context.fillStyle = "rgba(255,255,255,0.78)";
+  context.font =
+    '700 23px "Montserrat", Arial, sans-serif';
+  context.fillText(
+    data.categoryName.toUpperCase(),
+    60,
+    108
+  );
+
+  context.fillStyle = "#ffffff";
+  context.font =
+    '800 48px "Montserrat", Arial, sans-serif';
+
+  drawLiveCanvasText(
+    context,
+    `${data.stage} · ${data.title}`,
+    60,
+    165,
+    width - 120,
+    54,
+    2
+  );
+
+  context.fillStyle = "rgba(255,255,255,0.82)";
+  context.font =
+    '600 21px "Nunito Sans", Arial, sans-serif';
+  context.fillText(
+    `Datos actuales · ${data.updatedAt}`,
+    60,
+    250
+  );
+
+  drawLiveResultsTable(
+    context,
+    data,
+    columns,
+    scoreLabels,
+    50,
+    tableY,
+    tableWidth,
+    tableHeaderHeight,
+    rowHeight
+  );
+
+  context.fillStyle = "#6a737b";
+  context.font =
+    '600 20px "Nunito Sans", Arial, sans-serif';
+  context.textAlign = "center";
+  context.fillText(
+    "Resultados en vivo · Los puntajes pueden actualizarse durante el concurso",
+    width / 2,
+    height - 42
+  );
+  context.textAlign = "left";
+
+  return canvas;
+}
+
+function drawLiveResultsTable(
+  context,
+  data,
+  columns,
+  scoreLabels,
+  x,
+  y,
+  width,
+  headerHeight,
+  rowHeight
+) {
+  drawLiveRoundedRect(
+    context,
+    x,
+    y,
+    width,
+    headerHeight +
+      data.rows.length * rowHeight,
+    18,
+    "#ffffff",
+    "#d6e0e1",
+    2
+  );
+
+  drawLiveRoundedRect(
+    context,
+    x,
+    y,
+    width,
+    headerHeight,
+    18,
+    data.theme.primary,
+    null,
+    0
+  );
+
+  let columnX = x;
+
+  columns.forEach(column => {
+    context.fillStyle = "#ffffff";
+    context.font =
+      '800 17px "Montserrat", Arial, sans-serif';
+    context.textAlign =
+      column.align === "center"
+        ? "center"
+        : "left";
+
+    context.fillText(
+      column.label,
+      column.align === "center"
+        ? columnX + column.width / 2
+        : columnX + 14,
+      y + 42
+    );
+
+    columnX += column.width;
+  });
+
+  data.rows.forEach((row, rowIndex) => {
+    const rowY =
+      y + headerHeight +
+      rowIndex * rowHeight;
+
+    let rowFill =
+      rowIndex % 2 === 0
+        ? "#ffffff"
+        : "#f7f9f9";
+
+    if (row.classified) {
+      rowFill = "#edf9f1";
+    } else if (row.evaluating) {
+      rowFill = "#fff8dc";
+    } else if (row.disqualified) {
+      rowFill = "#fff0f0";
+    }
+
+    context.fillStyle = rowFill;
+    context.fillRect(
+      x + 1,
+      rowY,
+      width - 2,
+      rowHeight
+    );
+
+    context.fillStyle =
+      row.classified
+        ? "#37a85d"
+        : row.evaluating
+          ? "#e0a900"
+          : row.disqualified
+            ? "#9f2629"
+            : data.theme.primary;
+    context.fillRect(
+      x + 1,
+      rowY,
+      7,
+      rowHeight
+    );
+
+    const scoresByLabel =
+      Object.fromEntries(
+        row.scores.map(score => [
+          score.label,
+          score.value
+        ])
+      );
+
+    const values = {
+      order: row.order,
+      group: row.group,
+      dance: row.dance,
+      total: row.total
+    };
+
+    scoreLabels.forEach(label => {
+      values[`score-${label}`] =
+        scoresByLabel[label] || "—";
+    });
+
+    columnX = x;
+
+    columns.forEach((column, columnIndex) => {
+      const value =
+        String(values[column.key] || "—");
+
+      if (columnIndex > 0) {
+        context.strokeStyle = "#dfe7e8";
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(columnX, rowY);
+        context.lineTo(
+          columnX,
+          rowY + rowHeight
+        );
+        context.stroke();
+      }
+
+      if (
+        column.key === "group" ||
+        column.key === "dance"
+      ) {
+        context.fillStyle =
+          column.key === "group"
+            ? "#17242c"
+            : "#59656d";
+        context.font =
+          column.key === "group"
+            ? '800 21px "Montserrat", Arial, sans-serif'
+            : '600 19px "Nunito Sans", Arial, sans-serif';
+        context.textAlign = "left";
+
+        drawLiveCanvasText(
+          context,
+          value,
+          columnX + 14,
+          rowY + 39,
+          column.width - 28,
+          25,
+          2
+        );
+      } else {
+        context.fillStyle =
+          column.key === "total"
+            ? data.theme.primary
+            : "#17242c";
+        context.font =
+          column.key === "total"
+            ? value.length > 8
+              ? '800 16px "Montserrat", Arial, sans-serif'
+              : '800 23px "Montserrat", Arial, sans-serif'
+            : '800 21px "Montserrat", Arial, sans-serif';
+        context.textAlign = "center";
+        context.fillText(
+          value,
+          columnX + column.width / 2,
+          rowY + 65
+        );
+
+        if (
+          column.key === "total" &&
+          row.classified
+        ) {
+          context.fillStyle = "#176b35";
+          context.font =
+            '800 13px "Montserrat", Arial, sans-serif';
+          context.fillText(
+            "CLASIFICADO",
+            columnX + column.width / 2,
+            rowY + 91
+          );
+        }
+      }
+
+      columnX += column.width;
+    });
+
+    context.strokeStyle = "#dfe7e8";
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(x, rowY + rowHeight);
+    context.lineTo(
+      x + width,
+      rowY + rowHeight
+    );
+    context.stroke();
+  });
+
+  context.textAlign = "left";
+}
+
+function drawLiveCanvasText(
+  context,
+  text,
+  x,
+  y,
+  maxWidth,
+  lineHeight,
+  maxLines
+) {
+  const words =
+    String(text || "").split(/\s+/);
+  const lines = [];
+  let currentLine = "";
+
+  words.forEach(word => {
+    const candidate = currentLine
+      ? `${currentLine} ${word}`
+      : word;
+
+    if (
+      context.measureText(candidate).width >
+        maxWidth &&
+      currentLine
+    ) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = candidate;
+    }
+  });
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  const visibleLines =
+    lines.slice(0, maxLines);
+
+  if (lines.length > maxLines) {
+    let lastLine =
+      visibleLines[maxLines - 1];
+
+    while (
+      lastLine &&
+      context.measureText(
+        `${lastLine}…`
+      ).width > maxWidth
+    ) {
+      lastLine = lastLine.slice(0, -1);
+    }
+
+    visibleLines[maxLines - 1] =
+      `${lastLine}…`;
+  }
+
+  visibleLines.forEach(
+    (line, index) => {
+      context.fillText(
+        line,
+        x,
+        y + index * lineHeight
+      );
+    }
+  );
+}
+
+function drawLiveRoundedRect(
+  context,
+  x,
+  y,
+  width,
+  height,
+  radius,
+  fill,
+  stroke,
+  strokeWidth
+) {
+  const safeRadius = Math.min(
+    radius,
+    width / 2,
+    height / 2
+  );
+
+  context.beginPath();
+  context.moveTo(x + safeRadius, y);
+  context.lineTo(
+    x + width - safeRadius,
+    y
+  );
+  context.quadraticCurveTo(
+    x + width,
+    y,
+    x + width,
+    y + safeRadius
+  );
+  context.lineTo(
+    x + width,
+    y + height - safeRadius
+  );
+  context.quadraticCurveTo(
+    x + width,
+    y + height,
+    x + width - safeRadius,
+    y + height
+  );
+  context.lineTo(
+    x + safeRadius,
+    y + height
+  );
+  context.quadraticCurveTo(
+    x,
+    y + height,
+    x,
+    y + height - safeRadius
+  );
+  context.lineTo(x, y + safeRadius);
+  context.quadraticCurveTo(
+    x,
+    y,
+    x + safeRadius,
+    y
+  );
+  context.closePath();
+
+  context.fillStyle = fill;
+  context.fill();
+
+  if (stroke) {
+    context.strokeStyle = stroke;
+    context.lineWidth = strokeWidth;
+    context.stroke();
+  }
+}
+
+function createLiveExportFileName(data) {
+  return [
+    data.categoryName,
+    data.title,
+    "resultados-actuales"
+  ]
+    .join("-")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 function renderQualifyingCompetition(
   payload,
   config,
@@ -974,6 +1768,17 @@ function createScoreTable(options) {
     }
         </span>
 
+        <button
+          type="button"
+          class="live-group-share"
+          data-live-share
+          aria-label="Compartir imagen de ${escapeLiveAttribute(title)}"
+          title="Compartir como imagen"
+        >
+          <span aria-hidden="true">↗</span>
+          <b>Compartir</b>
+        </button>
+
         <span class="live-table-toggle" aria-hidden="true">
           <span class="live-table-toggle-label"></span>
           <span class="live-table-toggle-icon"></span>
@@ -1123,6 +1928,30 @@ function setupLiveGroupToggles(container) {
           liveGroupOpenState.set(
             details.dataset.liveGroupKey,
             details.open
+          );
+        }
+      );
+    });
+
+  container
+    .querySelectorAll(
+      "[data-live-share]"
+    )
+    .forEach(shareButton => {
+      shareButton.addEventListener(
+        "click",
+        event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const groupDetails =
+            shareButton.closest(
+              "details[data-live-group-key]"
+            );
+
+          shareLiveGroupImage(
+            groupDetails,
+            shareButton
           );
         }
       );
@@ -1280,7 +2109,12 @@ function createScoreRow(
   }
 
   return `
-    <tr class="${rowClass}">
+    <tr
+      class="${rowClass}"
+      data-export-order="${escapeLiveAttribute(row.orden || "—")}"
+      data-export-group="${escapeLiveAttribute(row.agrupacion || "")}"
+      data-export-dance="${escapeLiveAttribute(row.danza || "")}"
+    >
       <td class="live-order-cell" data-label="Orden">
         ${escapeLiveHtml(
     row.orden || "—"
@@ -1941,6 +2775,12 @@ function escapeLiveHtml(value) {
     String(value ?? "");
 
   return element.innerHTML;
+}
+
+function escapeLiveAttribute(value) {
+  return escapeLiveHtml(value)
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function detectChangedLiveRows(
