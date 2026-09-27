@@ -29,7 +29,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function fotoSrc(n) { return "img/galeria/" + YEAR + "-" + n + ".jpg"; }
   function img(src, cls, pos, alt) {
-    return '<img class="' + (cls || "img") + '" data-src="' + esc(src) + '" alt="' + esc(alt || "") + '"' +
+    return '<img class="' + (cls == null ? "img" : cls) + '" data-src="' + esc(src) + '" alt="' + esc(alt || "") + '"' +
       (pos ? ' style="object-position:' + esc(pos) + '"' : "") + ">";
   }
   function foto(n, cls, pos) { return img(fotoSrc(n), cls, pos, "Fotografía " + n + " de la edición " + YEAR); }
@@ -74,7 +74,7 @@
   function add(html, opt) {
     opt = opt || {};
     pages.push({ html: html, cls: opt.cls || "", density: opt.hard ? "hard" : "soft", folio: opt.folio !== false, light: !!opt.light });
-    if (opt.toc) tocItems.push({ index: pages.length - 1, t: opt.toc, s: opt.tocSub || "" });
+    if (opt.toc) tocItems.push({ index: pages.length - 1, t: opt.toc, s: opt.tocSub || "", grupo: !!opt.grupo });
     return pages.length - 1;
   }
   // Garantiza que la próxima página caiga a la IZQUIERDA de un pliego (índice impar).
@@ -184,7 +184,7 @@
       foto(principal, "img", g.foco) + '<div class="shade-t"></div><div class="shade-b"></div>' +
       '<div class="sec">Las selecciones · <b>' + String(idx).padStart(2, "0") + "</b></div>" + medalla(g) +
       '<div class="over"><div class="tipo">' + esc(g.tipo) + "</div><h2>" + esc(g.nombre) + '</h2><div class="loc">' + esc(g.localidad) + "</div></div>",
-      { cls: "bleed g-open", light: true, style: style, toc: g.nombre, tocSub: g.resultado }
+      { cls: "bleed g-open", light: true, toc: g.nombre, tocSub: g.resultado, grupo: true }
     );
     pages[pages.length - 1].style = style;
 
@@ -259,11 +259,12 @@
     }
     add('<div class="pad honor"><p class="kicker">Resultados</p><h2 class="h-serif">Cuadro de honor</h2>' +
       '<p class="subt">Categoría Mayores</p>' + podio(h.podio) +
-      '<p class="subt">Categoría Infantil</p>' + podio(h.podioInfantil) + "</div>",
+      '<p class="subt">Categoría Infantil</p>' + podio(h.podioInfantil) + "</div>" +
+      '<div class="frame honor-foto">' + img(h.foto, "", "50% 30%") + "</div>",
       { toc: "Cuadro de honor", tocSub: "Podios y distinciones" });
     add('<div class="pad honor"><p class="kicker">Reconocimientos</p><h2 class="h-serif">Distinciones</h2><div class="dist">' +
       h.distinciones.map(function (d) { return "<div><small>" + esc(d[0]) + "</small><b>" + esc(d[1]) + "</b>" + (d[2] ? "<span>" + esc(d[2]) + "</span>" : "") + "</div>"; }).join("") +
-      '</div><div class="frame" style="position:absolute;left:0;right:0;bottom:-9cqw;height:34cqw">' + img(h.foto, "", "50% 30%") + "</div></div>", {});
+      "</div></div>", {});
   }
 
   function pJurado() {
@@ -344,8 +345,8 @@
 
     // Sumario
     var toc = document.getElementById("tocList");
-    if (toc) toc.innerHTML = tocItems.filter(function (t) { return t.index > 1; }).slice(0, 14).map(function (t) {
-      return '<li><a href="#p' + t.index + '" data-go="' + t.index + '"><span class="n">' + String(t.index).padStart(2, "0") + '</span><span class="t">' + esc(t.t) + (t.s ? '<span class="s">' + esc(t.s) + "</span>" : "") + "</span></a></li>";
+    if (toc) toc.innerHTML = tocItems.filter(function (t) { return t.index > 1 && !t.grupo; }).slice(0, 12).map(function (t) {
+      return '<li><a href="#p' + t.index + '" data-go="' + t.index + '"><span class="n">' + String(t.index).padStart(2, "0") + '</span><span class="t">' + esc(t.t) + "" + "</span></a></li>";
     }).join("");
 
     var jump = document.getElementById("rvJump");
@@ -382,7 +383,7 @@
     var W = 500, H = Math.round(500 / 0.735);
     flip = new St.PageFlip(book, {
       width: W, height: H, size: "stretch",
-      minWidth: 300, maxWidth: 1400, minHeight: 400, maxHeight: 1900,
+      minWidth: 380, maxWidth: 1400, minHeight: 400, maxHeight: 1900,
       showCover: true, usePortrait: true, mobileScrollSupport: false,
       maxShadowOpacity: 0.45, flippingTime: 800, drawShadow: true, autoSize: true,
       startPage: start || 0

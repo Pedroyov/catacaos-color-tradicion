@@ -327,7 +327,7 @@
       if (f.usos.includes("portada")) badges.push("<span>PORTADA</span>");
       if (isDudosa(n) && !f.estrellas) badges.push('<span class="bad">¿?</span>');
       c.innerHTML =
-        `<img loading="lazy" src="${src(n)}" alt="Foto ${n}">
+        `<img loading="lazy" src="${src(n)}" data-full="${src(n, true)}" onerror="if(this.dataset.full){this.src=this.dataset.full;this.dataset.full='';}" alt="Foto ${n}">
          <span class="num">${n}</span>
          ${f.estrellas ? `<span class="stars">${"★".repeat(f.estrellas)}</span>` : ""}
          <div class="badges">${badges.join("")}</div>

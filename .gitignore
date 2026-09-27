@@ -1,0 +1,3 @@
+# Miniaturas solo para la herramienta de selección (se regeneran con
+# python herramientas/preparar_fotos.py). No hacen falta en el sitio público.
+img/galeria/mini/
