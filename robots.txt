@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /herramientas/
 
 Sitemap: https://pedroyov.github.io/catacaos-color-tradicion/sitemap.xml

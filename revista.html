@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CFM9Z9M851"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CFM9Z9M851');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revista de la Edición | Catacaos, Color y Tradición</title>
+  <meta name="description" content="La revista de cada edición de Catacaos, Color y Tradición: agrupaciones, fotos, resultados y crónica del concurso.">
+  <meta property="og:title" content="Revista · Catacaos, Color y Tradición">
+  <meta property="og:description" content="Hojea la revista de la edición: las selecciones, la final, los campeones y los mejores instantes.">
+  <meta property="og:image" content="img/social-preview.jpg">
+  <link rel="icon" href="img/logo1.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Oswald:wght@400;500;600;700&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/revista.css">
+</head>
+<body>
+
+  <header class="rv-bar">
+    <a class="rv-home" href="index.html" title="Volver al sitio">
+      <img src="img/logo.png" alt="">
+      <span>Catacaos, Color y Tradición</span>
+    </a>
+    <div class="rv-controls">
+      <button type="button" id="rvPrev" aria-label="Página anterior">‹</button>
+      <span id="rvPage" class="rv-page">—</span>
+      <button type="button" id="rvNext" aria-label="Página siguiente">›</button>
+      <select id="rvJump" aria-label="Ir a sección"></select>
+      <button type="button" id="rvMode" title="Cambiar entre hojear y leer con scroll">Leer con scroll</button>
+      <button type="button" id="rvFull" title="Pantalla completa">⤢</button>
+    </div>
+  </header>
+
+  <div class="rv-stage" id="rvStage">
+    <div class="rv-book" id="rvBook"></div>
+    <p class="rv-loading" id="rvLoading">Preparando la revista…</p>
+  </div>
+
+  <p class="rv-hint" id="rvHint">Arrastra la esquina de la página o usa las flechas del teclado.</p>
+
+  <script src="js/vendor/page-flip.browser.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/data-service.js"></script>
+  <script src="js/revista.js"></script>
+</body>
+</html>

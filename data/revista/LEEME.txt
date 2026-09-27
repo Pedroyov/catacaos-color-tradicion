@@ -1,0 +1,2 @@
+Aquí van los archivos exportados desde herramientas/seleccion-fotos.html
+(ej. fotos-2024.json). La revista los lee para armar cada edición.
