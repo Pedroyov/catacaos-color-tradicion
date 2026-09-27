@@ -32,7 +32,16 @@
     return '<img class="' + (cls == null ? "img" : cls) + '" data-src="' + esc(src) + '" alt="' + esc(alt || "") + '"' +
       (pos ? ' style="object-position:' + esc(pos) + '"' : "") + ">";
   }
-  function foto(n, cls, pos) { return img(fotoSrc(n), cls, pos, "Fotografía " + n + " de la edición " + YEAR); }
+  /* Punto de recorte: 1) el que marcaste a mano en la herramienta,
+     2) la cara detectada automáticamente, 3) el foco del grupo, 4) 50% 30%. */
+  function focoDe(n, respaldo) {
+    var f = FOTOS && FOTOS[n];
+    if (f && f.foco) return f.foco;
+    var s = ((window.CCT_SUGERENCIAS || {})[YEAR] || {})[n];
+    if (s && s.f && s.f[2] !== "d") return s.f[0] + "% " + s.f[1] + "%";
+    return respaldo || "50% 30%";
+  }
+  function foto(n, cls, pos) { return img(fotoSrc(n), cls, focoDe(n, pos), "Fotografía " + n + " de la edición " + YEAR); }
   function frame(n, caption, pos) {
     return '<figure class="frame" style="margin:0">' + foto(n, "", pos) +
       (caption ? "<figcaption>" + esc(caption) + "</figcaption>" : "") + "</figure>";
@@ -43,6 +52,12 @@
   function mono(nombre) { return (nombre || "?").replace(/^(A\.F\.|G\.F\.|E\.C\.|C\.C\.|I\.E\.P\.)\s*/, "").split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2).toUpperCase(); }
   function logo(g) {
     return g.logo ? img(g.logo, "", null, "Logo de " + g.nombre) : '<span class="mono">' + esc(mono(g.nombre)) + "</span>";
+  }
+  // Logo que lleva a la ficha técnica de la agrupación (agrupacion.html).
+  // Va dentro de <a> porque la librería de páginas deja pasar los clics en enlaces.
+  function logoLink(g) {
+    if (!g.logo) return logo(g);
+    return '<a class="lglink" href="agrupacion.html?logo=' + encodeURIComponent(String(g.logo).split("/").pop()) + '" title="Ver ficha técnica de ' + esc(g.nombre) + '">' + logo(g) + "</a>";
   }
   function findGrupoByShort(nombre) {
     var key = Object.keys(R.grupos).find(function (k) { return R.grupos[k].nombre === nombre && R.grupos[k].categoria === "Mayores"; });
@@ -90,7 +105,7 @@
     var c = R.portada;
     used[c.foto] = true;
     add(
-      foto(c.foto, "img", "50% 35%") + '<div class="shade-t"></div><div class="shade-b"></div>' +
+      foto(c.foto, "img") + '<div class="shade-t"></div><div class="shade-b"></div>' +
       '<div class="mast"><h1>CATACAOS</h1><div class="tag">Color y Tradición</div></div>' +
       '<div class="issue"><span>Nº ' + esc(R.numero) + "</span><span>" + esc(R.mes) + "</span><span>Edición de colección</span></div>" +
       '<div class="lines">' + c.lineas.map(function (l) { return "<div><b>" + esc(l.k) + "</b><span>" + esc(l.t) + "</span></div>"; }).join("") + "</div>" +
@@ -150,7 +165,7 @@
     var html = '<div class="pad tablas"><p class="kicker">Gran final</p><h2 class="h-serif">La tabla de la noche</h2><div class="final-list">';
     R.final.forEach(function (f) {
       var g = findGrupoByShort(f[0]) || { nombre: f[0] };
-      html += '<div class="fl-row' + (f[3] === "1°" ? " top" : "") + '"><span class="pos">' + esc(f[3] || "·") + '</span><span class="lg">' + logo(g) + "</span>" +
+      html += '<div class="fl-row' + (f[3] === "1°" ? " top" : "") + '"><span class="pos">' + esc(f[3] || "·") + '</span><span class="lg">' + logoLink(g) + "</span>" +
         '<span class="nm">' + esc(f[0]) + "<small>" + esc(f[1]) + '</small></span><span class="pt">' + esc(f[2]) + "</span>" +
         '<span class="bar"><i style="width:' + ((f[2] - min) / (max - min) * 100).toFixed(1) + '%"></i></span></div>';
     });
@@ -203,7 +218,7 @@
       }).join("") + "</table>";
     var m = mosaico.length;
     add(
-      '<div class="top"><p class="kicker">Ficha técnica</p><h3>' + esc(g.nombre) + '</h3></div><div class="logo">' + logo(g) + "</div>" +
+      '<div class="top"><p class="kicker">Ficha técnica</p><h3>' + esc(g.nombre) + '</h3></div><div class="logo">' + logoLink(g) + "</div>" +
       '<div class="stats">' + stats.map(function (s) { return "<div><b" + (s[2] ? ' class="sm"' : "") + ">" + esc(s[1]) + "</b><span>" + esc(s[0]) + "</span></div>"; }).join("") + "</div>" +
       '<div class="data"><p class="lbl">Danzas presentadas</p>' + tbl +
       (g.premios && g.premios.length ? '<ul class="premios">' + g.premios.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul>" : "") +
@@ -229,7 +244,7 @@
 
   function card(g) {
     var d = g.danzas[0] || {};
-    return '<div class="card" style="--accent:' + esc(g.color || "var(--gold)") + '"><span class="lg">' + logo(g) + "</span><div><b>" + esc(g.nombre) + "</b>" +
+    return '<div class="card" style="--accent:' + esc(g.color || "var(--gold)") + '"><span class="lg">' + logoLink(g) + "</span><div><b>" + esc(g.nombre) + "</b>" +
       "<small>" + esc([g.tipo, g.localidad].filter(Boolean).join(" · ")) + "</small>" +
       '<div class="pts">' + g.danzas.map(function (x) { return esc(x.nombre) + " <em>" + esc(x.final || x.puntaje) + "</em>"; }).join(" · ") + "</div>" +
       (g.puesto && g.puesto <= 3 || /revelaci/i.test(g.resultado) ? '<span class="badge">' + esc(g.resultado) + "</span>" : "") + "</div></div>";
@@ -269,7 +284,7 @@
 
   function pJurado() {
     var j = R.jurado; used[j.foto] = true;
-    add('<div class="photo frame">' + foto(j.foto, "", "50% 25%") + '</div><div class="pie">' + esc(j.pie) + "</div>" +
+    add('<div class="photo frame">' + foto(j.foto, "") + '</div><div class="pie">' + esc(j.pie) + "</div>" +
       '<div class="pad"><p class="kicker">Evaluación</p><h2 class="h-serif">El jurado</h2><div class="miembros">' +
       j.miembros.map(function (m, i) { return "<div><small>Jurado " + (i + 1) + "</small><b>" + esc(m) + "</b></div>"; }).join("") + "</div></div>",
       { cls: "jurado", toc: "El jurado" });
@@ -407,6 +422,28 @@
     location.href = location.pathname + "?" + params.toString() + (cur ? "#p" + cur : "");
   }
 
+  /* ---------- PDF: se imprime la revista página por página ---------- */
+  function prepararPdf() {
+    var msg = document.getElementById("rvPdfMsg"), txt = document.getElementById("rvPdfTxt");
+    msg.hidden = false;
+    var imgs = [];
+    book.querySelectorAll("img[data-src]").forEach(function (im) { im.src = im.getAttribute("data-src"); im.removeAttribute("data-src"); });
+    book.querySelectorAll("img").forEach(function (im) { im.loading = "eager"; imgs.push(im); });
+    var total = imgs.length, listas = 0;
+    function uno() { listas++; txt.textContent = "Cargando fotos: " + listas + " de " + total; }
+    var esperas = imgs.map(function (im) {
+      return im.complete ? (uno(), Promise.resolve()) : new Promise(function (ok) { im.addEventListener("load", function () { uno(); ok(); }, { once: true }); im.addEventListener("error", function () { uno(); ok(); }, { once: true }); });
+    });
+    var limite = new Promise(function (ok) { setTimeout(ok, 45000); });
+    Promise.race([Promise.all(esperas), limite]).then(function () {
+      txt.textContent = "En la ventana que se abre, elige «Guardar como PDF».";
+      setTimeout(function () {
+        msg.hidden = true;
+        window.print();
+      }, 600);
+    });
+  }
+
   function bindToc() {
     book.querySelectorAll("[data-go]").forEach(function (li) {
       li.addEventListener("click", function (ev) { ev.preventDefault(); ev.stopPropagation(); goTo(li.getAttribute("data-go")); });
@@ -434,10 +471,18 @@
   }
 
   /* ---------- inicio ---------- */
+  if (window.innerWidth < 760) {
+    document.getElementById("rvHint").textContent = "Desliza con el dedo para pasar la página.";
+    if (params.get("modo") !== "scroll") document.getElementById("rvMode").textContent = "Scroll";
+  }
   document.getElementById("rvPrev").onclick = function () { flip && flip.flipPrev(); };
   document.getElementById("rvNext").onclick = function () { flip && flip.flipNext(); };
   document.getElementById("rvJump").onchange = function (e) { if (e.target.value !== "") goTo(e.target.value); e.target.value = ""; };
   document.getElementById("rvMode").onclick = switchMode;
+  document.getElementById("rvPdf").onclick = function () {
+    if (document.body.classList.contains("rv-scroll")) prepararPdf();
+    else { params.set("e", YEAR); params.set("modo", "scroll"); params.set("pdf", "1"); location.href = location.pathname + "?" + params.toString(); }
+  };
   document.getElementById("rvFull").onclick = function () {
     if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
   };
@@ -446,17 +491,26 @@
     if (e.key === "ArrowRight") flip.flipNext();
     if (e.key === "ArrowLeft") flip.flipPrev();
   });
-  var lastW = window.innerWidth;
+  var resizeT = null;
   window.addEventListener("resize", function () {
-    // Al cruzar el umbral móvil/escritorio se rehace el libro para ajustar tamaño.
-    var w = window.innerWidth;
-    if (flip && ((lastW <= 760) !== (w <= 760))) location.reload();
-    lastW = w;
+    // Si cambia el tamaño y ya no corresponde una/dos páginas, se rehace el libro.
+    clearTimeout(resizeT);
+    resizeT = setTimeout(function () {
+      if (!flip) return;
+      var w = book.parentElement.getBoundingClientRect().width;
+      var want = w < 760 ? "portrait" : "landscape";
+      if (flip.getOrientation() !== want) {
+        var cur = flip.getCurrentPageIndex();
+        location.replace(location.pathname + location.search + (cur ? "#p" + cur : ""));
+        location.reload();
+      }
+    }, 350);
   });
 
   Promise.all([
     loadScript("data/revista/" + YEAR + ".js"),
-    loadScript("data/revista/fotos-" + YEAR + ".js")
+    loadScript("data/revista/fotos-" + YEAR + ".js"),
+    loadScript("herramientas/sugerencias.js")
   ]).then(function () {
     R = (window.CCT_REVISTA || {})[YEAR];
     F = (window.CCT_FOTOS || {})[YEAR];
@@ -471,6 +525,7 @@
     if (params.get("modo") === "scroll") {
       setScroll(true);
       var el = book.querySelector('.page[data-i="' + start + '"]'); if (el && start) setTimeout(function () { el.scrollIntoView(); }, 50);
+      if (params.get("pdf")) setTimeout(prepararPdf, 300);
     } else initFlip(Math.min(start, pages.length - 1));
     historial();
   });

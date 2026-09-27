@@ -46,11 +46,20 @@ body{background:radial-gradient(ellipse at 50% 30%, #2b221d 0%, #120e0c 70%);col
 .rv-hint{text-align:center;color:rgba(244,237,230,.45);font-size:12px;margin:-24px 0 24px}
 
 @media (max-width:760px){
+  .rv-bar{padding:0 10px;gap:8px}
   .rv-home span{display:none}
-  .rv-controls select{max-width:120px}
+  .rv-home img{height:28px}
+  .rv-controls{gap:4px}
+  .rv-controls button,.rv-controls select{height:32px;padding:0 7px;font-size:12px;white-space:nowrap}
+  .rv-controls select{max-width:84px}
+  .rv-controls #rvPrev,.rv-controls #rvNext{width:30px}
+  .rv-page{min-width:46px;font-size:12px}
   #rvFull{display:none}
   .rv-sizer{width:min(100%, calc((100vh - var(--bar) - 60px) * var(--ratio)))}
   .rv-stage{padding-left:10px;padding-right:10px}
+}
+@media (max-width:420px){
+  #rvPdf{display:none}
 }
 
 /* Modo lectura (scroll): páginas apiladas */
@@ -238,7 +247,7 @@ body.rv-scroll #rvPrev, body.rv-scroll #rvNext, body.rv-scroll #rvPage{display:n
 .ficha .hist{margin-top:1.6cqw;display:flex;flex-wrap:wrap;gap:1cqw;align-items:center;font:600 1.9cqw var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .ficha .hist i{font-style:normal;background:var(--ink);color:#fff;padding:.3cqw 1.2cqw;border-radius:5cqw}
 .ficha .hist i.win{background:var(--gold);color:var(--ink)}
-.ficha .mosaic{position:absolute;left:7cqw;right:7cqw;bottom:9cqw;height:44cqw;display:grid;gap:1.4cqw}
+.ficha .mosaic{position:absolute;left:7cqw;right:7cqw;bottom:9cqw;height:40cqw;display:grid;gap:1.4cqw}
 .mosaic.m1{grid-template-columns:1fr}
 .mosaic.m2{grid-template-columns:1fr 1fr}
 .mosaic.m3{grid-template-columns:1.25fr 1fr;grid-template-rows:1fr 1fr}
@@ -319,3 +328,30 @@ body.rv-scroll #rvPrev, body.rv-scroll #rvNext, body.rv-scroll #rvPage{display:n
 .back .txt h2{font:900 italic 7.6cqw/1 var(--serif);margin:0 0 3cqw}
 .back .txt p{font:400 2.3cqw/1.6 var(--sans);color:rgba(255,255,255,.7);margin:0}
 .back .txt a{color:var(--gold2)}
+
+/* Logos que llevan a la ficha de la agrupación */
+.lglink{display:block;width:100%;height:100%;position:relative}
+.lglink img{pointer-events:none}
+.lglink:hover{filter:brightness(1.08)}
+
+/* ---------- Aviso mientras se prepara el PDF ---------- */
+.rv-pdfmsg{position:fixed;inset:0;z-index:80;background:rgba(10,7,6,.8);display:flex;align-items:center;justify-content:center;padding:20px}
+.rv-pdfmsg[hidden]{display:none}
+.rv-pdfmsg div{background:#f7f1e7;color:#1c1613;border-radius:14px;padding:26px 30px;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.rv-pdfmsg b{display:block;font:700 20px var(--serif);margin-bottom:8px}
+.rv-pdfmsg span{font:400 14px/1.5 var(--sans);color:#6f6259}
+
+/* ---------- Impresión / Guardar como PDF: una página de revista por hoja ---------- */
+@page{size:148mm 201.4mm;margin:0}
+@media print{
+  html,body{background:#fff !important;height:auto}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+  .rv-bar,.rv-hint,.rv-loading,.rv-pdfmsg{display:none !important}
+  .rv-stage{padding:0 !important;display:block}
+  .rv-sizer{width:148mm !important;margin:0}
+  .rv-book{display:block !important;gap:0 !important}
+  body.rv-scroll .page{width:148mm !important;height:201.4mm !important;aspect-ratio:auto;box-shadow:none !important;
+    break-after:page;page-break-after:always;break-inside:avoid;margin:0}
+  body.rv-scroll .page:last-child{break-after:auto;page-break-after:auto}
+  .page .pg::after{display:none}
+}

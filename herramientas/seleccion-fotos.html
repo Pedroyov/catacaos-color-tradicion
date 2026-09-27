@@ -89,6 +89,15 @@
   .keys{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
   kbd{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:0 5px;font-size:11px}
   .suggest{font-size:12px;color:var(--gold)}
+  .viewer .stage img{cursor:crosshair}
+  .fdot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid #fff;
+        box-shadow:0 0 0 2px rgba(0,0,0,.6), 0 0 12px rgba(0,0,0,.6);pointer-events:none;display:none}
+  .fdot.auto{border-style:dashed;border-color:var(--gold)}
+  .crops{display:flex;gap:8px;align-items:flex-end}
+  .crops div{overflow:hidden;border-radius:6px;background:#000;border:1px solid var(--line)}
+  .crops img{width:100%;height:100%;object-fit:cover;display:block}
+  .crops .cv{width:90px;height:122px}.crops .ch{width:150px;height:100px}
+  .crops small{display:block;color:var(--muted);font-size:11px;margin-top:3px;text-align:center}
 
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:60;display:none;align-items:center;justify-content:center;padding:16px}
   .modal.show{display:flex}
@@ -153,6 +162,7 @@
   <div class="stage">
     <button class="nav prev" id="vPrev">‹</button>
     <img id="vImg" alt="">
+    <div class="fdot" id="vDot"></div>
     <button class="nav next" id="vNext">›</button>
   </div>
   <div class="side">
@@ -181,6 +191,15 @@
     <div>
       <label>Foto principal del grupo</label>
       <button id="vMain" style="width:100%">Marcar como foto principal del grupo</button>
+    </div>
+    <div>
+      <label>Recorte en la revista · haz clic en la cara</label>
+      <div class="crops">
+        <span><div class="cv"><img id="vCropV" alt=""></div><small>vertical</small></span>
+        <span><div class="ch"><img id="vCropH" alt=""></div><small>horizontal</small></span>
+      </div>
+      <div class="note" id="vFocoInfo" style="margin:6px 0"></div>
+      <button id="vFocoReset" style="width:100%">Volver al foco automático</button>
     </div>
     <div>
       <label>Nota / pie de foto (quién aparece, qué pasa)</label>
@@ -448,9 +467,51 @@
     $("vMain").textContent = f.principal ? "✓ Es la foto principal del grupo" : "Marcar como foto principal del grupo";
     $("vMain").classList.toggle("primary", f.principal);
     $("vNote").value = f.nota || "";
+    renderFoco();
     // precarga siguiente
     const nx = visible[viewIdx+1]; if (nx !== undefined) (new Image()).src = src(nx, true);
   }
+  function autoFoco(n){
+    const s = (sug[year] || {})[n];
+    return s && s.f ? s.f : [50, 30, "d"];
+  }
+  function focoActual(n){
+    const f = state.fotos[n];
+    if (f.foco){ const m = f.foco.match(/([\d.]+)%\s+([\d.]+)%/); if (m) return [Number(m[1]), Number(m[2]), "m"]; }
+    return autoFoco(n);
+  }
+  function renderFoco(){
+    const n = cur(); if (n === undefined) return;
+    const [x, y, k] = focoActual(n);
+    const pos = x + "% " + y + "%";
+    const full = src(n, true);
+    ["vCropV","vCropH"].forEach(id => { const im = $(id); if (im.getAttribute("src") !== full) im.src = full; im.style.objectPosition = pos; });
+    $("vFocoInfo").textContent = k === "m" ? "Foco marcado a mano." : k === "c" ? "Foco automático: cara detectada." :
+      k === "p" ? "Foco automático aproximado (sin cara clara). Revisa y haz clic si hace falta." : "Sin foco detectado: haz clic en la cara.";
+    $("vFocoReset").disabled = k !== "m";
+    placeDot();
+  }
+  function placeDot(){
+    const n = cur(); if (n === undefined) return;
+    const im = $("vImg"), dot = $("vDot");
+    if (!im.naturalWidth){ dot.style.display = "none"; return; }
+    const [x, y, k] = focoActual(n);
+    const r = im.getBoundingClientRect(), sr = im.parentElement.getBoundingClientRect();
+    dot.style.left = (r.left - sr.left + r.width * x / 100) + "px";
+    dot.style.top = (r.top - sr.top + r.height * y / 100) + "px";
+    dot.classList.toggle("auto", k !== "m");
+    dot.style.display = "block";
+  }
+  $("vImg").addEventListener("load", placeDot);
+  window.addEventListener("resize", placeDot);
+  $("vImg").addEventListener("click", e => {
+    const r = e.target.getBoundingClientRect();
+    const x = Math.round((e.clientX - r.left) / r.width * 100), y = Math.round((e.clientY - r.top) / r.height * 100);
+    state.fotos[cur()].foco = x + "% " + y + "%";
+    save(); renderFoco();
+  });
+  $("vFocoReset").onclick = () => { delete state.fotos[cur()].foco; save(); renderFoco(); };
+
   function setStars(s){ state.fotos[cur()].estrellas = s; save(); renderViewer(); }
   function toggleUso(u){
     const f = state.fotos[cur()];
@@ -514,7 +575,7 @@
     // limpiar fotos sin información para que el archivo sea legible
     Object.keys(out.fotos).forEach(n => {
       const f = out.fotos[n];
-      if (!f.grupo && !f.estrellas && !f.usos.length && !f.nota) delete out.fotos[n];
+      if (!f.grupo && !f.estrellas && !f.usos.length && !f.nota && !f.foco) delete out.fotos[n];
       else { if (!f.nota) delete f.nota; if (!f.principal) delete f.principal; if (!f.usos.length) delete f.usos; }
     });
     const body = "// Generado por herramientas/seleccion-fotos.html (Descargar). Se puede reemplazar entero.\n" +

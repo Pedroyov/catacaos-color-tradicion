@@ -35,6 +35,7 @@
       <button type="button" id="rvNext" aria-label="Página siguiente">›</button>
       <select id="rvJump" aria-label="Ir a sección"></select>
       <button type="button" id="rvMode" title="Cambiar entre hojear y leer con scroll">Leer con scroll</button>
+      <button type="button" id="rvPdf" title="Guardar la revista como PDF">PDF</button>
       <button type="button" id="rvFull" title="Pantalla completa">⤢</button>
     </div>
   </header>
@@ -42,6 +43,10 @@
   <div class="rv-stage" id="rvStage">
     <div class="rv-sizer"><div class="rv-book" id="rvBook"></div></div>
     <p class="rv-loading" id="rvLoading">Preparando la revista…</p>
+  </div>
+
+  <div class="rv-pdfmsg" id="rvPdfMsg" hidden>
+    <div><b>Preparando el PDF…</b><span id="rvPdfTxt">Cargando las fotos de todas las páginas.</span></div>
   </div>
 
   <p class="rv-hint" id="rvHint">Arrastra la esquina de la página o usa las flechas del teclado.</p>
