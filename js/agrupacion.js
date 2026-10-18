@@ -215,7 +215,7 @@
       .sort(function (a, b) { return b.anios.length - a.anios.length; }).slice(0, 6);
 
     app.innerHTML =
-      '<section class="ag-hero"' + (fotos.length ? ' style="--hero:url(\'img/galeria/' + fotos[0].y + "-" + fotos[0].n + '.jpg\');--hero-pos:' + esc(fotos[0].pos) + '"' : "") + '><a class="ag-back" href="agrupacion.html">← Todas las agrupaciones</a><div class="ag-wrap">' +
+      '<section class="ag-hero"' + (fotos.length ? ' style="--hero:url(\'../img/galeria/' + fotos[0].y + "-" + fotos[0].n + '.jpg\');--hero-pos:' + esc(fotos[0].pos) + '"' : "") + '><a class="ag-back" href="agrupacion.html">← Todas las agrupaciones</a><div class="ag-wrap">' +
       '<div class="ag-crest">' + logoHtml(g) + '</div><div><span class="ag-kicker">Ficha técnica · ' + esc(g.tipo || "Agrupación") + "</span>" +
       "<h1>" + esc(g.nombre) + '</h1><div class="ag-loc">' + esc(lugar(g) || "Procedencia por confirmar") + "</div>" +
       '<div class="ag-badges">' + badges.join("") + "</div>" + (redes ? '<div class="ag-redes">' + redes + "</div>" : "") + "</div></div></section>" +
